@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Green Hat" />
+  <meta name="apple-mobile-web-app-title" content="Green Hat 🔰" />
   <meta name="theme-color" content="#006874" />
   <meta name="description" content="CNC lathe touch-off guide and setup notes for operators." />
-  <title>Green Hat</title>
+  <title>Green Hat 🔰</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -22,7 +22,7 @@
   <header class="top-app-bar" id="topBar">
     <div class="top-app-bar-inner">
       <div class="app-bar-left">
-        <span class="app-title">Green Hat</span>
+        <span class="app-title">Green Hat 🔰</span>
         <span class="app-subtitle" id="jobBadge"></span>
       </div>
       <div class="app-bar-actions">
@@ -93,6 +93,35 @@
             <label for="materialField">Material</label>
           </div>
         </div>
+        <div class="field-group">
+          <div class="select-field">
+            <select id="setupStatus">
+              <option value="Ready">Ready</option>
+              <option value="Incomplete">Incomplete</option>
+              <option value="Needs Attention">Needs Attention</option>
+              <option value="Hold">Hold</option>
+            </select>
+            <label>Setup Status</label>
+          </div>
+          <div class="text-field">
+            <input type="text" id="attentionFlag" placeholder=" " autocomplete="off" />
+            <label for="attentionFlag">Attention Flag</label>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="text-field">
+            <input type="text" id="lastSetupBy" placeholder=" " autocomplete="off" />
+            <label for="lastSetupBy">Last Setup By</label>
+          </div>
+          <div class="text-field">
+            <input type="text" id="lastRunBy" placeholder=" " autocomplete="off" />
+            <label for="lastRunBy">Last Run By</label>
+          </div>
+        </div>
+        <div class="info-chip">
+          <span class="material-icons-round">info</span>
+          <span><strong>Setup Status:</strong> Ready means another person can run it. Incomplete, Needs Attention, or Hold means stop and check the notes first.</span>
+        </div>
         <div class="text-field full-width">
           <textarea id="toolNotes" placeholder=" " rows="3"></textarea>
           <label for="toolNotes">Tool Notes</label>
@@ -107,6 +136,29 @@
           </button>
           <button class="btn-tonal" id="loadJobInline">
             <span class="material-icons-round">folder_open</span> Load
+          </button>
+          <button class="btn-outlined" id="addLogBtn">
+            <span class="material-icons-round">post_add</span> Add Log Entry
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-label">Timestamped Note Log</h3>
+        <p class="card-hint">Use this for shift handoff notes, setup changes, problems found, or anything the next person needs to know.</p>
+        <div id="noteLogList" class="saved-list"></div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-label">Handoff Summary</h3>
+        <p class="card-hint">This summary is built from the current job fields so another operator can quickly see what is ready, what is not, and what needs attention.</p>
+        <div id="handoffSummary" class="handoff-summary"></div>
+        <div class="card-actions">
+          <button class="btn-tonal" id="refreshHandoffBtn">
+            <span class="material-icons-round">refresh</span> Refresh
+          </button>
+          <button class="btn-outlined" id="exportHandoffBtn">
+            <span class="material-icons-round">ios_share</span> Export Handoff
           </button>
         </div>
       </div>
@@ -157,7 +209,7 @@
           </div>
           <div class="info-chip">
             <span class="material-icons-round">lightbulb</span>
-            X on a lathe is always the <strong>diameter</strong>, not the radius. A .010 diameter change = .005 radial move.
+            <span><strong>Check X mode first.</strong> Many lathes show X as diameter, but some controls can use diameter/radius modes such as G7/G8. Look near the top of the program, the setup sheet, and the active modal display before entering an offset.</span>
           </div>
           <div class="text-field">
             <input type="number" id="touchDia" placeholder=" " step="0.001" inputmode="decimal" />
@@ -243,7 +295,7 @@
 
           <div class="info-chip">
             <span class="material-icons-round">info</span>
-            Double-check these against your control readout before cutting.
+            <span><strong>Absolute vs Incremental:</strong> Absolute means move <strong>to</strong> a position. Incremental means move <strong>by</strong> a distance from where the tool is now. Double-check which mode your control is using before cutting.</span>
           </div>
 
           <div class="card-actions">
@@ -472,6 +524,25 @@
       <!-- Setup Tips -->
       <div class="card collapsible">
         <button class="collapse-btn" onclick="toggleCollapse(this)">
+          <span class="material-icons-round">school</span>
+          <span>Beginner Definitions</span>
+          <span class="material-icons-round collapse-arrow">expand_more</span>
+        </button>
+        <div class="collapse-body">
+          <div class="definition-grid">
+            <div class="definition-row"><strong>Control confirmed</strong><span>You are at the right machine, the right program or screen is active, and the control mode matches what you expect.</span></div>
+            <div class="definition-row"><strong>Stickout</strong><span>The amount of part or tool hanging out unsupported. Long stickout can cause chatter, taper, poor finish, or clearance problems.</span></div>
+            <div class="definition-row"><strong>Work zero</strong><span>The part location the program uses as zero. On a lathe this is often the finished face for Z and the spindle centerline for X.</span></div>
+            <div class="definition-row"><strong>Offset</strong><span>A saved correction that tells the control where the part or tool really is.</span></div>
+            <div class="definition-row"><strong>Single block</strong><span>A control mode that runs one program line at a time so the operator can verify each move.</span></div>
+            <div class="definition-row"><strong>Feed override</strong><span>A knob or setting that slows or speeds programmed feed moves. Keep it low while proving a new setup.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Setup Tips -->
+      <div class="card collapsible">
+        <button class="collapse-btn" onclick="toggleCollapse(this)">
           <span class="material-icons-round">build</span>
           <span>Lathe Setup Tips</span>
           <span class="material-icons-round collapse-arrow">expand_more</span>
@@ -497,6 +568,7 @@
         <div class="collapse-body">
           <ul class="tip-list">
             <li>X is diameter based on most CNC lathes — a .010 diameter change is .005 radial.</li>
+            <li>Check the safety block, setup sheet, and active modal display for X diameter/radius mode. Some controls use G7/G8, but verify the machine manual.</li>
             <li>Z face is usually 0.000. Plunging into the face moves Z negative.</li>
             <li>After touching off, make a short air move before cutting stock.</li>
             <li>Touch off on a clean, burr-free surface for accuracy.</li>
@@ -532,7 +604,10 @@
         <div class="collapse-body">
           <div class="symbol-grid">
             <div class="symbol-row"><span class="symbol-code">X</span><span class="symbol-desc">Diameter position on a lathe</span></div>
+            <div class="symbol-row"><span class="symbol-code">X Dia</span><span class="symbol-desc">X numbers represent full part diameter. Check the safety block, setup sheet, and active modal display.</span></div>
+            <div class="symbol-row"><span class="symbol-code">X Rad</span><span class="symbol-desc">X numbers represent distance from spindle centerline. Verify before touching off or entering offsets.</span></div>
             <div class="symbol-row"><span class="symbol-code">Z</span><span class="symbol-desc">Length / face position. Face is often Z0.000</span></div>
+            <div class="symbol-row"><span class="symbol-code">G7/G8</span><span class="symbol-desc">Common diameter/radius mode codes on some lathes. Do not assume; controls differ.</span></div>
             <div class="symbol-row"><span class="symbol-code">S</span><span class="symbol-desc">Spindle speed or CSS setting, depending on mode</span></div>
             <div class="symbol-row"><span class="symbol-code">F</span><span class="symbol-desc">Feed rate. In G99 usually feed per revolution</span></div>
             <div class="symbol-row"><span class="symbol-code">G00</span><span class="symbol-desc">Rapid move — positioning only, not cutting</span></div>
@@ -544,6 +619,27 @@
             <div class="symbol-row"><span class="symbol-code">M04</span><span class="symbol-desc">Spindle reverse / counterclockwise</span></div>
             <div class="symbol-row"><span class="symbol-code">M05</span><span class="symbol-desc">Spindle stop</span></div>
             <div class="symbol-row"><span class="symbol-code">T0101</span><span class="symbol-desc">Tool station 01, offset 01 (common format)</span></div>
+            <div class="symbol-row"><span class="symbol-code">Work Zero</span><span class="symbol-desc">The part reference point the program is built from, not the machine home position.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Work Offset</span><span class="symbol-desc">Stored shift that tells the control where part zero is, commonly G54, G55, or G56.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Tool Offset</span><span class="symbol-desc">Stored correction that tells the control where the tool tip is.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Wear Offset</span><span class="symbol-desc">Small fine correction used after setup to bring a measured part into tolerance.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Safety Block</span><span class="symbol-desc">The first program lines that set important modes before cutting, such as units, work offset, feed mode, and spindle mode.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Modal Display</span><span class="symbol-desc">The control screen area showing which G-codes are currently active.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Touch-Off</span><span class="symbol-desc">Carefully finding where a tool touches the part, stock, face, gauge, or known surface.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Chuck</span><span class="symbol-desc">The clamp that holds the part while it spins.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Jaws</span><span class="symbol-desc">The gripping blocks inside the chuck. Watch clearance near jaws.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Grip</span><span class="symbol-desc">How much material the jaws are holding. Too little grip can be unsafe.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Stickout</span><span class="symbol-desc">The amount of part or tool sticking out unsupported. Shorter is usually more rigid and safer.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Air Move</span><span class="symbol-desc">A test move made away from the material to confirm direction and path before cutting.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Single Block</span><span class="symbol-desc">A mode that runs one program line at a time. Use it for first moves after setup changes.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Feed Override</span><span class="symbol-desc">A control setting that slows or speeds feed moves.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Safe Retract</span><span class="symbol-desc">A planned move away from the part, jaws, chuck, shoulder, or tool before rapid moves.</span></div>
+            <div class="symbol-row"><span class="symbol-code">SFM</span><span class="symbol-desc">Surface feet per minute. Cutting speed at the outside surface of the part.</span></div>
+            <div class="symbol-row"><span class="symbol-code">RPM</span><span class="symbol-desc">Spindle revolutions per minute. How fast the part rotates.</span></div>
+            <div class="symbol-row"><span class="symbol-code">IPR</span><span class="symbol-desc">Inches per revolution. How far the tool feeds each spindle turn.</span></div>
+            <div class="symbol-row"><span class="symbol-code">CSS</span><span class="symbol-desc">Constant Surface Speed. The control changes RPM to hold a target SFM as diameter changes.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Absolute</span><span class="symbol-desc">Move to a position.</span></div>
+            <div class="symbol-row"><span class="symbol-code">Incremental</span><span class="symbol-desc">Move by a distance from the current position.</span></div>
           </div>
         </div>
       </div>

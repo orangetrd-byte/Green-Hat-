@@ -1,4 +1,4 @@
-/* ─────────────────────────────────────────
+﻿/* ─────────────────────────────────────────
    Green Hat — app.js
    Material You PWA for beginner CNC operators
    ───────────────────────────────────────── */
@@ -12,6 +12,7 @@ const state = {
   selectedToolType: 'OD',
   savedJobs: [],
   savedSF: [],
+  noteLog: [],
   setupData: {},
 };
 
@@ -19,7 +20,7 @@ const state = {
 document.addEventListener('DOMContentLoaded', () => {
   loadFromStorage();
   initWelcome();
-  switchNav('notes', document.querySelector('[data-nav="notes"]'));
+  switchNav('notes', document.querySelector('.nav-item[data-nav="notes"]'));
   bindEvents();
   updateJobBadge();
   renderSavedJobsInline();
@@ -42,12 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
 function loadFromStorage() {
   state.savedJobs = JSON.parse(localStorage.getItem('cnc_helper_jobs') || '[]');
   state.savedSF   = JSON.parse(localStorage.getItem('cnc_helper_sf')   || '[]');
+  state.noteLog   = JSON.parse(localStorage.getItem('green_hat_note_log') || '[]');
   state.setupData = JSON.parse(localStorage.getItem('cnc_helper_setup') || '{}');
 }
 
 function persist() {
   localStorage.setItem('cnc_helper_jobs',  JSON.stringify(state.savedJobs));
   localStorage.setItem('cnc_helper_sf',    JSON.stringify(state.savedSF));
+  localStorage.setItem('green_hat_note_log', JSON.stringify(state.noteLog));
   localStorage.setItem('cnc_helper_setup', JSON.stringify(state.setupData));
 }
 
@@ -78,6 +81,9 @@ function bindEvents() {
   document.getElementById('saveBtn').addEventListener('click', saveCurrentJob);
   document.getElementById('saveJobInline').addEventListener('click', saveCurrentJob);
   document.getElementById('loadJobInline').addEventListener('click', openLoadModal);
+  document.getElementById('addLogBtn').addEventListener('click', addLogEntry);
+  document.getElementById('refreshHandoffBtn').addEventListener('click', renderHandoffSummary);
+  document.getElementById('exportHandoffBtn').addEventListener('click', exportHandoff);
 
   // Menu items
   document.getElementById('newJobBtn').addEventListener('click', () => { newJob(); closeMenu(); });
@@ -117,6 +123,10 @@ function getJobFields() {
     opNumber:    val('opNumber'),
     machineName: val('machineName'),
     material:    val('materialField'),
+    setupStatus: val('setupStatus') || 'Ready',
+    attentionFlag: val('attentionFlag'),
+    lastSetupBy: val('lastSetupBy'),
+    lastRunBy: val('lastRunBy'),
     toolNotes:   val('toolNotes'),
     setupNotes:  val('setupNotes'),
     savedAt:     new Date().toLocaleString(),
@@ -128,8 +138,13 @@ function populateJobFields(job) {
   setVal('opNumber',     job.opNumber);
   setVal('machineName',  job.machineName);
   setVal('materialField',job.material);
+  setVal('setupStatus',  job.setupStatus || 'Ready');
+  setVal('attentionFlag',job.attentionFlag);
+  setVal('lastSetupBy',  job.lastSetupBy);
+  setVal('lastRunBy',    job.lastRunBy);
   setVal('toolNotes',    job.toolNotes);
   setVal('setupNotes',   job.setupNotes);
+  renderHandoffSummary();
 }
 
 function saveCurrentJob() {
@@ -143,6 +158,7 @@ function saveCurrentJob() {
   persist();
   updateJobBadge();
   renderSavedJobsInline();
+  renderHandoffSummary();
   showToast(`Saved: ${job.partNumber}`);
 }
 
@@ -159,7 +175,7 @@ function renderSavedJobsInline() {
     <div class="saved-item">
       <div>
         <div class="saved-item-label">${esc(j.partNumber)}</div>
-        <div class="saved-item-sub">${esc(j.opNumber || '')} ${j.machineName ? '· ' + esc(j.machineName) : ''} · ${esc(j.savedAt || '')}</div>
+        <div class="saved-item-sub">${esc(j.opNumber || '')} ${j.machineName ? '· ' + esc(j.machineName) : ''} · ${esc(j.setupStatus || 'Ready')} · ${esc(j.savedAt || '')}</div>
       </div>
       <div class="saved-item-actions">
         <button class="icon-btn" onclick="loadJob(${i})" title="Load"><span class="material-icons-round">folder_open</span></button>
@@ -186,15 +202,106 @@ function deleteJob(i) {
 }
 
 function newJob() {
-  ['partNumber','opNumber','machineName','materialField','toolNotes','setupNotes'].forEach(id => setVal(id, ''));
+  ['partNumber','opNumber','machineName','materialField','attentionFlag','lastSetupBy','lastRunBy','toolNotes','setupNotes'].forEach(id => setVal(id, ''));
+  setVal('setupStatus', 'Ready');
   updateJobBadge();
-  switchNav('notes', document.querySelector('[data-nav="notes"]'));
+  renderHandoffSummary();
+  switchNav('notes', document.querySelector('.nav-item[data-nav="notes"]'));
   showToast('New job started');
 }
 
 function restoreNotes() {
   const last = state.savedJobs[0];
   if (last) { populateJobFields(last); updateJobBadge(); }
+  renderNoteLog();
+  renderHandoffSummary();
+}
+
+function addLogEntry() {
+  const job = getJobFields();
+  const text = [job.attentionFlag, job.setupNotes, job.toolNotes].filter(Boolean).join(' | ');
+  if (!text) { showToast('Add setup notes or an attention flag first'); return; }
+
+  state.noteLog.unshift({
+    time: new Date().toLocaleString(),
+    partNumber: job.partNumber,
+    opNumber: job.opNumber,
+    by: job.lastSetupBy || job.lastRunBy,
+    status: job.setupStatus,
+    text,
+  });
+  state.noteLog = state.noteLog.slice(0, 30);
+  persist();
+  renderNoteLog();
+  renderHandoffSummary();
+  showToast('Log entry added');
+}
+
+function renderNoteLog() {
+  const el = document.getElementById('noteLogList');
+  if (!el) return;
+  if (!state.noteLog.length) {
+    el.innerHTML = '<p class="empty-state">No note log entries yet.</p>';
+    return;
+  }
+  el.innerHTML = state.noteLog.map(entry => `
+    <div class="saved-item log-entry">
+      <div>
+        <div class="saved-item-label">${esc(entry.partNumber || 'No part number')} ${entry.opNumber ? '· ' + esc(entry.opNumber) : ''}</div>
+        <div class="saved-item-sub">${esc(entry.time)} ${entry.by ? '· ' + esc(entry.by) : ''} · ${esc(entry.status || 'Ready')}</div>
+        <div class="log-entry-text">${esc(entry.text)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function handoffData() {
+  const job = getJobFields();
+  return {
+    generatedAt: new Date().toLocaleString(),
+    job,
+    setup: state.setupData,
+    lastLog: state.noteLog[0] || null,
+  };
+}
+
+function renderHandoffSummary() {
+  const el = document.getElementById('handoffSummary');
+  if (!el) return;
+  const data = handoffData();
+  const job = data.job;
+  const rows = [
+    ['Part Number', job.partNumber || '—'],
+    ['Operation', job.opNumber || '—'],
+    ['Machine / Cell', job.machineName || '—'],
+    ['Material', job.material || '—'],
+    ['Setup Status', job.setupStatus || 'Ready'],
+    ['Attention Flag', job.attentionFlag || 'None'],
+    ['Last Setup By', job.lastSetupBy || '—'],
+    ['Last Run By', job.lastRunBy || '—'],
+    ['Tool Notes', job.toolNotes || '—'],
+    ['Setup Notes', job.setupNotes || '—'],
+    ['Last Log', data.lastLog ? `${data.lastLog.time}: ${data.lastLog.text}` : 'None'],
+  ];
+  el.innerHTML = rows.map(([label, value]) => `
+    <div class="handoff-row">
+      <span>${esc(label)}</span>
+      <strong>${esc(value)}</strong>
+    </div>
+  `).join('');
+}
+
+function exportHandoff() {
+  const data = handoffData();
+  const name = (data.job.partNumber || 'green-hat-handoff').replace(/[^a-z0-9-_]+/gi, '-');
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${name}-handoff-${datestamp()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Handoff exported');
 }
 
 // ── Load Modal ────────────────────────────
@@ -217,7 +324,7 @@ function renderLoadModal() {
     <div class="saved-item" style="cursor:pointer" onclick="loadJob(${i})">
       <div>
         <div class="saved-item-label">${esc(j.partNumber)}</div>
-        <div class="saved-item-sub">${esc(j.opNumber || '')} ${j.machineName ? '· ' + esc(j.machineName) : ''} · ${esc(j.savedAt || '')}</div>
+        <div class="saved-item-sub">${esc(j.opNumber || '')} ${j.machineName ? '· ' + esc(j.machineName) : ''} · ${esc(j.setupStatus || 'Ready')} · ${esc(j.savedAt || '')}</div>
       </div>
       <span class="material-icons-round" style="color:var(--md-primary)">chevron_right</span>
     </div>
@@ -446,6 +553,7 @@ function exportJSON() {
   const data = {
     jobs:  state.savedJobs,
     sf:    state.savedSF,
+    noteLog: state.noteLog,
     setup: state.setupData,
     exportedAt: new Date().toISOString(),
   };
@@ -468,11 +576,14 @@ function importJSON(e) {
       const data = JSON.parse(ev.target.result);
       if (data.jobs)  state.savedJobs = data.jobs;
       if (data.sf)    state.savedSF   = data.sf;
+      if (data.noteLog) state.noteLog = data.noteLog;
       if (data.setup) state.setupData = data.setup;
       persist();
       renderSavedJobsInline();
       renderSavedSF();
+      renderNoteLog();
       restoreSetup();
+      renderHandoffSummary();
       showToast('Imported successfully');
     } catch {
       showToast('Import failed — invalid file');
@@ -483,13 +594,15 @@ function importJSON(e) {
 }
 
 function clearAll() {
-  if (!confirm('Clear all saved jobs, speeds & feeds, and setup data?')) return;
+  if (!confirm('Clear all saved jobs, speeds & feeds, note log, and setup data?')) return;
   state.savedJobs = [];
   state.savedSF   = [];
+  state.noteLog   = [];
   state.setupData = {};
   persist();
   renderSavedJobsInline();
   renderSavedSF();
+  renderNoteLog();
   newJob();
   showToast('All data cleared');
 }
@@ -525,3 +638,4 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
+

@@ -859,6 +859,65 @@ body {
   line-height: 1.4;
 }
 
+/* ── Beginner Definitions / Handoff ── */
+.definition-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.definition-row {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: var(--md-surface-1);
+  border: 1px solid var(--md-outline-variant);
+}
+
+.definition-row strong {
+  color: var(--md-primary);
+  font-size: 14px;
+}
+
+.definition-row span {
+  color: var(--md-on-surface);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.handoff-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.handoff-row {
+  display: grid;
+  grid-template-columns: minmax(105px, 0.9fr) 1.4fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--md-outline-variant);
+}
+
+.handoff-row:last-child {
+  border-bottom: none;
+}
+
+.handoff-row span {
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.handoff-row strong {
+  color: var(--md-on-surface);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 500;
+  word-break: break-word;
+}
+
 /* ── Saved Items List ── */
 .saved-list {
   margin-top: 12px;
@@ -887,6 +946,17 @@ body {
   font-size: 12px;
   color: var(--md-on-surface-variant);
   margin-top: 2px;
+}
+
+.log-entry {
+  align-items: flex-start;
+}
+
+.log-entry-text {
+  font-size: 13px;
+  color: var(--md-on-surface);
+  line-height: 1.45;
+  margin-top: 8px;
 }
 
 .saved-item-actions {
@@ -1128,6 +1198,7 @@ body {
   .nav-item { min-width: 56px; padding: 8px 6px; }
   .result-grid { grid-template-columns: 1fr; }
   .field-group { grid-template-columns: 1fr; }
+  .handoff-row { grid-template-columns: 1fr; gap: 4px; }
 }
 
 @media (min-width: 500px) {
