@@ -265,6 +265,20 @@ body {
   flex-wrap: wrap;
 }
 
+.log-action-block {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--md-outline-variant);
+}
+
+.log-action-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--md-on-surface-variant);
+  margin-bottom: 8px;
+  letter-spacing: 0.2px;
+}
+
 /* ── Buttons ── */
 .btn-filled, .btn-tonal, .btn-outlined {
   display: inline-flex;
@@ -776,6 +790,19 @@ body {
 }
 
 .collapse-btn span:nth-child(2) { flex: 1; }
+
+.collapse-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.collapse-title-wrap small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--md-on-surface-variant);
+  line-height: 1.35;
+}
 
 .collapse-arrow {
   color: var(--md-on-surface-variant);

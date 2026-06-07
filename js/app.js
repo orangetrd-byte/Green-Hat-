@@ -64,6 +64,7 @@ function switchNav(key, btn) {
   if (btn) btn.classList.add('active');
 
   state.currentNav = key;
+  if (key === 'notes') renderHandoffSummary();
   window.scrollTo(0, 0);
 }
 
@@ -523,7 +524,7 @@ function deleteSF(i) {
 
 function renderSavedSF() {
   const el = document.getElementById('savedSFList');
-  if (!state.savedSF.length) { el.innerHTML = '<p class="empty-state">No saved speeds &amp; feeds yet.</p>'; return; }
+  if (!state.savedSF.length) { el.innerHTML = '<p class="empty-state">No saved speeds or feeds yet. Add one above to get started.</p>'; return; }
 
   el.innerHTML = state.savedSF.map((s, i) => `
     <div class="saved-item">
