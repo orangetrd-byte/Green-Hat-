@@ -1,4 +1,4 @@
-﻿/* ─────────────────────────────────────────
+/* ─────────────────────────────────────────
    Green Hat — app.js
    Material You PWA for beginner CNC operators
    ───────────────────────────────────────── */
@@ -160,6 +160,7 @@ function saveCurrentJob() {
   updateJobBadge();
   renderSavedJobsInline();
   renderHandoffSummary();
+  setActionStatus(`Saved ${job.partNumber} on this device. Export JSON if you need a backup or another device.`);
   showToast(`Saved: ${job.partNumber}`);
 }
 
@@ -170,7 +171,7 @@ function updateJobBadge() {
 
 function renderSavedJobsInline() {
   const el = document.getElementById('savedJobsList');
-  if (!state.savedJobs.length) { el.innerHTML = ''; return; }
+  if (!state.savedJobs.length) { el.innerHTML = '<p class="empty-state">No saved jobs yet. Save this job to keep it on this device.</p>'; return; }
 
   el.innerHTML = state.savedJobs.map((j, i) => `
     <div class="saved-item">
@@ -190,6 +191,7 @@ function loadJob(i) {
   populateJobFields(state.savedJobs[i]);
   updateJobBadge();
   closeLoadModal();
+  setActionStatus(`Loaded ${state.savedJobs[i].partNumber}. Review status, notes, and checklist before running.`);
   showToast(`Loaded: ${state.savedJobs[i].partNumber}`);
 }
 
@@ -235,6 +237,7 @@ function addLogEntry() {
   persist();
   renderNoteLog();
   renderHandoffSummary();
+  setActionStatus('Shift handoff log entry added. It is saved on this device and included in JSON export.');
   showToast('Log entry added');
 }
 
@@ -302,6 +305,7 @@ function exportHandoff() {
   a.download = `${name}-handoff-${datestamp()}.json`;
   a.click();
   URL.revokeObjectURL(url);
+  setActionStatus('Handoff summary exported as JSON. Keep it with the setup or shift notes.');
   showToast('Handoff exported');
 }
 
@@ -455,6 +459,7 @@ function saveSetup() {
     refNotes:        val('refNotes'),
   };
   persist();
+  setActionStatus('Setup reference saved on this device.');
   showToast('Setup saved');
 }
 
@@ -513,6 +518,7 @@ function saveSF() {
   persist();
   renderSavedSF();
   setVal('sfLabel', ''); setVal('sfSpindle', ''); setVal('sfFeed', ''); setVal('sfFeedLabel', '');
+  setActionStatus(`Saved speeds/feeds preset: ${label}.`);
   showToast(`Saved: ${label}`);
 }
 
@@ -565,6 +571,7 @@ function exportJSON() {
   a.download = `cnc-helper-${datestamp()}.json`;
   a.click();
   URL.revokeObjectURL(url);
+  setActionStatus('Full Green Hat backup exported as JSON. Use this before clearing data or changing devices.');
   showToast('Exported');
 }
 
@@ -585,8 +592,10 @@ function importJSON(e) {
       renderNoteLog();
       restoreSetup();
       renderHandoffSummary();
+      setActionStatus('Import complete. Jobs, notes, speeds/feeds, and setup reference were restored from the JSON file.');
       showToast('Imported successfully');
     } catch {
+      setActionStatus('Import failed. Choose a Green Hat JSON backup file.');
       showToast('Import failed — invalid file');
     }
   };
@@ -605,6 +614,7 @@ function clearAll() {
   renderSavedSF();
   renderNoteLog();
   newJob();
+  setActionStatus('All saved Green Hat data has been cleared from this device.');
   showToast('All data cleared');
 }
 
@@ -629,6 +639,13 @@ function esc(str) {
 
 function datestamp() {
   return new Date().toISOString().slice(0,10);
+}
+
+function setActionStatus(msg) {
+  const el = document.getElementById('actionStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('success');
 }
 
 let toastTimer;

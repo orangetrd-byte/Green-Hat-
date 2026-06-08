@@ -64,7 +64,7 @@
           <span class="welcome-emoji">🔰</span>
           <div>
             <div class="welcome-title">New here? Start with Green Hat.</div>
-            <div class="welcome-desc">Enter your part number and machine below, then head to <strong>Touch-Off</strong> for a step-by-step walkthrough.</div>
+            <div class="welcome-desc">1. Fill in Job Notes. 2. Use Touch-Off one step at a time. 3. Verify all 10 checklist items before cutting. Saved jobs stay on this device until you clear them.</div>
           </div>
           <button class="icon-btn welcome-close" onclick="dismissWelcome()" aria-label="Dismiss">
             <span class="material-icons-round">close</span>
@@ -122,6 +122,10 @@
           <span class="material-icons-round">info</span>
           <span><strong>Setup Status:</strong> Ready means another person can run it. Incomplete, Needs Attention, or Hold means stop and check the notes first.</span>
         </div>
+        <div class="info-chip">
+          <span class="material-icons-round">save_alt</span>
+          <span><strong>Stored on this device:</strong> Save Job, log entries, speeds, feeds, and setup reference data are saved in this browser using local storage. Export JSON before clearing data or switching devices.</span>
+        </div>
         <div class="text-field full-width">
           <textarea id="toolNotes" placeholder=" " rows="3"></textarea>
           <label for="toolNotes">Tool Notes</label>
@@ -144,6 +148,7 @@
             <span class="material-icons-round">post_add</span> Add Log Entry
           </button>
         </div>
+        <div class="action-status" id="actionStatus" aria-live="polite">No recent save or handoff action yet.</div>
       </div>
 
       <div class="card">
@@ -214,6 +219,10 @@
             <span class="material-icons-round">lightbulb</span>
             <span><strong>Check X mode first.</strong> Many lathes show X as diameter, but some controls can use diameter/radius modes such as G7/G8. Look near the top of the program, the setup sheet, and the active modal display before entering an offset.</span>
           </div>
+          <div class="info-chip">
+            <span class="material-icons-round">search</span>
+            <span><strong>Where to look:</strong> Check the first safety lines of the program, the active G-code/modal screen, and your setup sheet. If you are not sure whether X is diameter or radius, stop and ask before typing numbers into the offset page.</span>
+          </div>
           <div class="text-field">
             <input type="number" id="touchDia" placeholder=" " step="0.001" inputmode="decimal" />
             <label for="touchDia">Touch-Off Diameter (in)</label>
@@ -240,8 +249,13 @@
             <span class="material-icons-round step-intro-icon">my_location</span>
             <div>
               <h3 class="step-heading">Step 2 — Enter Your Target</h3>
-              <p class="step-desc">Enter the diameter you want to cut to (from your print or job traveler). Also enter your Z face and any plunge depth if needed.</p>
+              <p class="step-desc">Enter the size you want the part to end up at. For a beginner, think of this as "where the finished cut should be," not a button to move the machine yet.</p>
             </div>
+          </div>
+          <div class="beginner-flow-card">
+            <div class="flow-step"><strong>First:</strong> touch off and set/confirm the offset on the control.</div>
+            <div class="flow-step"><strong>Then:</strong> use this calculator to compare the measured diameter to the target diameter.</div>
+            <div class="flow-step"><strong>Before cutting:</strong> air move, single block, and keep feed override low.</div>
           </div>
           <div class="text-field">
             <input type="number" id="targetDia" placeholder=" " step="0.001" inputmode="decimal" />
@@ -279,8 +293,8 @@
           <div class="step-intro">
             <span class="material-icons-round step-intro-icon">open_with</span>
             <div>
-              <h3 class="step-heading">Step 3 — Your Target Moves</h3>
-              <p class="step-desc">Enter these values into your machine. X is your diameter move. Radial travel is how far the tool physically moves.</p>
+              <h3 class="step-heading">Step 3 - Read the Move Result</h3>
+              <p class="step-desc">Use these numbers as a check before you type anything into the control. X Target is the diameter position. X Move is the diameter change. Radial travel is the physical tool movement.</p>
             </div>
           </div>
 
@@ -299,6 +313,10 @@
           <div class="info-chip">
             <span class="material-icons-round">info</span>
             <span><strong>Absolute vs Incremental:</strong> Absolute means move <strong>to</strong> a position. Incremental means move <strong>by</strong> a distance from where the tool is now. Double-check which mode your control is using before cutting.</span>
+          </div>
+          <div class="info-chip">
+            <span class="material-icons-round">rule</span>
+            <span><strong>Offset check:</strong> Work offset locates the part. Tool offset locates the tool tip. Wear offset is a small correction after measuring a cut part. Do not change a wear offset unless you know which tool and axis it affects.</span>
           </div>
 
           <div class="card-actions">
@@ -539,9 +557,14 @@
             <div class="definition-row"><strong>Control confirmed</strong><span>You are at the right machine, the right program or screen is active, and the control mode matches what you expect.</span></div>
             <div class="definition-row"><strong>Stickout</strong><span>The amount of part or tool hanging out unsupported. Long stickout can cause chatter, taper, poor finish, or clearance problems.</span></div>
             <div class="definition-row"><strong>Work zero</strong><span>The part location the program uses as zero. On a lathe this is often the finished face for Z and the spindle centerline for X.</span></div>
+            <div class="definition-row"><strong>Work offset</strong><span>A saved position that tells the control where the part zero is. Example: G54 may point to the finished face of the part.</span></div>
+            <div class="definition-row"><strong>Tool offset</strong><span>A saved position that tells the control where the tool tip is. Each tool usually has its own offset number.</span></div>
+            <div class="definition-row"><strong>Wear offset</strong><span>A small correction used after measuring a cut part. Example: if the diameter is too big, a small X wear correction may bring the next part into tolerance.</span></div>
             <div class="definition-row"><strong>Offset</strong><span>A saved correction that tells the control where the part or tool really is.</span></div>
             <div class="definition-row"><strong>Single block</strong><span>A control mode that runs one program line at a time so the operator can verify each move.</span></div>
             <div class="definition-row"><strong>Feed override</strong><span>A knob or setting that slows or speeds programmed feed moves. Keep it low while proving a new setup.</span></div>
+            <div class="definition-row"><strong>Active modal display</strong><span>The control screen area that shows the modes currently active, such as feed mode, spindle mode, work offset, and sometimes diameter/radius behavior.</span></div>
+            <div class="definition-row"><strong>Safety block</strong><span>The first lines of a program that set important modes before cutting. Read this area before trusting any move.</span></div>
           </div>
         </div>
       </div>

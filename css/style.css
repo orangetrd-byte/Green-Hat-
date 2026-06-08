@@ -945,6 +945,43 @@ body {
   word-break: break-word;
 }
 
+
+.action-status {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--md-surface-1);
+  border: 1px solid var(--md-outline-variant);
+  color: var(--md-on-surface-variant);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.action-status.success {
+  border-color: rgba(46, 125, 50, 0.35);
+  background: rgba(46, 125, 50, 0.08);
+  color: var(--md-success);
+}
+
+.beginner-flow-card {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+  padding: 12px;
+  border-radius: var(--radius-lg);
+  background: var(--md-surface-1);
+  border: 1px solid var(--md-outline-variant);
+}
+
+.flow-step {
+  color: var(--md-on-surface);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.flow-step strong {
+  color: var(--md-primary);
+}
 /* ── Saved Items List ── */
 .saved-list {
   margin-top: 12px;
