@@ -1,4 +1,4 @@
-const CACHE = 'green-hat-v6';
+const CACHE = 'green-hat-v7';
 const ASSETS = [
   './',
   './index.html',

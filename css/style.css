@@ -1286,6 +1286,15 @@ body {
   padding: 24px;
 }
 
+.app-version {
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  padding: 8px 0 18px;
+  opacity: 0.75;
+}
+
 /* ── Saved Jobs List (inline) ── */
 #savedJobsList {
   display: flex;
