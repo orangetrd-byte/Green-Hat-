@@ -1,9 +1,10 @@
-const CACHE = 'green-hat-v7';
+const CACHE = 'green-hat-v8-update-helper';
 const ASSETS = [
   './',
   './index.html',
   './css/style.css',
   './js/app.js',
+  './update-helper.js',
   './manifest.json'
 ];
 
@@ -23,20 +24,33 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
+self.addEventListener('message', e => {
+  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
+});
+
 self.addEventListener('fetch', e => {
-  if (e.request.mode === 'navigate') {
+  if (e.request.method !== 'GET') return;
+  const url = new URL(e.request.url);
+  const freshFirst = e.request.mode === 'navigate' || /\.(html|js|css|json)$/i.test(url.pathname);
+
+  if (freshFirst) {
     e.respondWith(
       fetch(e.request)
         .then(response => {
           const copy = response.clone();
-          caches.open(CACHE).then(cache => cache.put('./index.html', copy));
+          caches.open(CACHE).then(cache => cache.put(e.request, copy));
           return response;
         })
-        .catch(() => caches.match('./index.html'))
+        .catch(() => caches.match(e.request).then(cached => cached || caches.match('./index.html')))
     );
     return;
   }
+
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./index.html')))
+    caches.match(e.request).then(r => r || fetch(e.request).then(response => {
+      const copy = response.clone();
+      caches.open(CACHE).then(cache => cache.put(e.request, copy));
+      return response;
+    }).catch(() => caches.match('./index.html')))
   );
 });
