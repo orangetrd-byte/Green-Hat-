@@ -982,6 +982,108 @@ body {
 .flow-step strong {
   color: var(--md-primary);
 }
+
+.day-one-card {
+  border: 1px solid rgba(0, 104, 116, 0.18);
+}
+
+.day-one-list {
+  display: grid;
+  gap: 8px;
+  padding-left: 20px;
+  color: var(--md-on-surface);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.custom-checklist-panel {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--md-outline-variant);
+}
+
+.compact-actions {
+  justify-content: flex-start;
+  margin-top: 4px;
+}
+
+.custom-check-item {
+  background: rgba(0, 104, 116, 0.05);
+}
+
+.diagram-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.diagram-card {
+  border: 1px solid var(--md-outline-variant);
+  border-radius: var(--radius-md);
+  background: var(--md-surface-1);
+  padding: 12px;
+}
+
+.diagram-card h4 {
+  color: var(--md-primary);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.diagram-card p {
+  color: var(--md-on-surface);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.diagram-card svg {
+  width: 100%;
+  height: auto;
+  margin-bottom: 8px;
+  background: var(--md-surface);
+  border-radius: var(--radius-sm);
+}
+
+.diagram-card text {
+  fill: var(--md-on-surface);
+  font-family: var(--font-body);
+  font-size: 11px;
+}
+
+.diagram-axis {
+  stroke: var(--md-outline);
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+}
+
+.diagram-part {
+  fill: var(--md-primary-container);
+  stroke: var(--md-primary);
+  stroke-width: 2;
+}
+
+.diagram-chuck {
+  fill: var(--md-secondary-container);
+  stroke: var(--md-secondary);
+  stroke-width: 2;
+}
+
+.diagram-move {
+  stroke: var(--md-error);
+  stroke-width: 4;
+}
+
+.diagram-dim {
+  stroke: var(--md-primary);
+  stroke-width: 2;
+}
+
+.diagram-safe {
+  fill: none;
+  stroke: var(--md-success);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 /* ── Saved Items List ── */
 .saved-list {
   margin-top: 12px;
@@ -1267,4 +1369,61 @@ body {
 
 @media (min-width: 500px) {
   .main-content { padding: 20px 24px 28px; }
+}
+
+@media print {
+  .top-app-bar,
+  .bottom-nav,
+  .overflow-menu,
+  .menu-backdrop,
+  .toast,
+  .welcome-banner,
+  .card-actions,
+  .custom-checklist-panel,
+  .day-one-card {
+    display: none !important;
+  }
+
+  body {
+    padding: 0;
+    background: #fff;
+    color: #000;
+  }
+
+  .main-content {
+    max-width: none;
+    padding: 0;
+  }
+
+  .section,
+  .wizard-panel {
+    display: none !important;
+  }
+
+  body.print-handoff #sec-notes,
+  body.print-checklist #sec-touchoff,
+  body.print-checklist #step4 {
+    display: block !important;
+  }
+
+  body.print-handoff #sec-notes > .card,
+  body.print-handoff #savedJobsList,
+  body.print-checklist #sec-touchoff > .wizard-progress,
+  body.print-checklist #sec-touchoff > .wizard-panel:not(#step4) {
+    display: none !important;
+  }
+
+  body.print-handoff #sec-notes > .card:nth-of-type(4) {
+    display: block !important;
+  }
+
+  .card {
+    box-shadow: none;
+    border: 1px solid #bbb;
+    break-inside: avoid;
+  }
+
+  .check-item {
+    border-bottom: 1px solid #ddd;
+  }
 }

@@ -74,6 +74,15 @@
 
       <div class="card">
         <div class="field-group">
+          <div class="select-field">
+            <select id="unitSystem">
+              <option value="imperial">Imperial - inch / SFM</option>
+              <option value="metric">Metric - mm / m/min</option>
+            </select>
+            <label>Units</label>
+          </div>
+        </div>
+        <div class="field-group">
           <div class="text-field">
             <input type="text" id="partNumber" placeholder=" " autocomplete="off" />
             <label for="partNumber">Part Number</label>
@@ -151,6 +160,22 @@
         <div class="action-status" id="actionStatus" aria-live="polite">No recent save or handoff action yet.</div>
       </div>
 
+      <div class="card day-one-card">
+        <h3 class="card-label">Day 1 Guided Path</h3>
+        <p class="card-hint">Use this when you are new, nervous, or taking over a setup. Do one line at a time.</p>
+        <ol class="day-one-list">
+          <li>Fill out Job Notes so the part, operation, machine, material, and status are known.</li>
+          <li>Open Setup Reference and write down work offset, stock, jaws, stickout, coolant, and shop rules.</li>
+          <li>Use Touch-Off Step 1 through Step 4. Do not skip the X mode and offset checks.</li>
+          <li>Check Speeds & Feeds against your shop standard or trainer before cutting.</li>
+          <li>Print or export the handoff summary if another person may run this setup.</li>
+        </ol>
+        <div class="card-actions">
+          <button class="btn-tonal" data-day-nav="setup"><span class="material-icons-round">build_circle</span> Setup</button>
+          <button class="btn-filled" data-day-nav="touchoff"><span class="material-icons-round">ads_click</span> Touch-Off</button>
+        </div>
+      </div>
+
       <div class="card">
         <h3 class="card-label">Timestamped Note Log</h3>
         <p class="card-hint">Use this for shift handoff notes, setup changes, problems found, or anything the next person needs to know.</p>
@@ -167,6 +192,9 @@
           </button>
           <button class="btn-outlined" id="exportHandoffBtn">
             <span class="material-icons-round">ios_share</span> Export Handoff
+          </button>
+          <button class="btn-outlined" id="printHandoffBtn">
+            <span class="material-icons-round">print</span> Print Handoff
           </button>
         </div>
       </div>
@@ -225,7 +253,7 @@
           </div>
           <div class="text-field">
             <input type="number" id="touchDia" placeholder=" " step="0.001" inputmode="decimal" />
-            <label for="touchDia">Touch-Off Diameter (in)</label>
+            <label for="touchDia" id="touchDiaLabel">Touch-Off Diameter (in)</label>
           </div>
           <div class="tool-row-select">
             <label class="field-label">Tool Type</label>
@@ -259,16 +287,16 @@
           </div>
           <div class="text-field">
             <input type="number" id="targetDia" placeholder=" " step="0.001" inputmode="decimal" />
-            <label for="targetDia">Target Diameter (in)</label>
+            <label for="targetDia" id="targetDiaLabel">Target Diameter (in)</label>
           </div>
           <div class="field-group">
             <div class="text-field">
               <input type="number" id="zFace" placeholder=" " step="0.001" inputmode="decimal" />
-              <label for="zFace">Z Face (in)</label>
+              <label for="zFace" id="zFaceLabel">Z Face (in)</label>
             </div>
             <div class="text-field">
               <input type="number" id="plungeDepth" placeholder=" " step="0.001" inputmode="decimal" />
-              <label for="plungeDepth">Plunge Depth (in)</label>
+              <label for="plungeDepth" id="plungeDepthLabel">Plunge Depth (in)</label>
             </div>
           </div>
           <div class="field-group">
@@ -382,8 +410,30 @@
 
           <div class="checklist-progress" id="checkProgress">0 / 10 checked</div>
 
+          <div class="custom-checklist-panel">
+            <h3 class="card-label">Shop-Specific Checks</h3>
+            <p class="card-hint">Add short checks your shop wants every beginner to confirm before cutting.</p>
+            <div class="field-group">
+              <div class="text-field full-width">
+                <input type="text" id="customCheckText" placeholder=" " autocomplete="off" />
+                <label for="customCheckText">Custom Checklist Item</label>
+              </div>
+            </div>
+            <div class="card-actions compact-actions">
+              <button class="btn-tonal" id="addCustomCheckBtn" type="button">
+                <span class="material-icons-round">playlist_add</span> Add Check
+              </button>
+              <button class="btn-outlined" id="clearCustomChecksBtn" type="button">
+                <span class="material-icons-round">delete_sweep</span> Clear Custom
+              </button>
+            </div>
+          </div>
+
           <div class="card-actions">
             <button class="btn-outlined" onclick="goStep(3)"><span class="material-icons-round">arrow_back</span> Back</button>
+            <button class="btn-outlined" id="printChecklistBtn" type="button">
+              <span class="material-icons-round">print</span> Print Checklist
+            </button>
             <button class="btn-filled success" onclick="resetWizard()">
               <span class="material-icons-round">restart_alt</span> New Touch-Off
             </button>
@@ -407,17 +457,17 @@
           </div>
           <div class="text-field">
             <input type="number" id="stockDia" placeholder=" " step="0.001" inputmode="decimal" />
-            <label for="stockDia">Stock Diameter (in)</label>
+            <label for="stockDia" id="stockDiaLabel">Stock Diameter (in)</label>
           </div>
         </div>
         <div class="field-group">
           <div class="text-field">
             <input type="number" id="stockLen" placeholder=" " step="0.001" inputmode="decimal" />
-            <label for="stockLen">Stock Length (in)</label>
+              <label for="stockLen" id="stockLenLabel">Stock Length (in)</label>
           </div>
           <div class="text-field">
             <input type="number" id="stickout" placeholder=" " step="0.001" inputmode="decimal" />
-            <label for="stickout">Stickout (in)</label>
+              <label for="stickout" id="stickoutLabel">Stickout (in)</label>
           </div>
         </div>
         <div class="text-field full-width">
@@ -435,6 +485,14 @@
         <div class="text-field full-width">
           <textarea id="refNotes" placeholder=" " rows="3"></textarea>
           <label for="refNotes">Reference Notes</label>
+        </div>
+        <div class="text-field full-width">
+          <textarea id="shopRules" placeholder=" " rows="3"></textarea>
+          <label for="shopRules">Shop-Specific Rules</label>
+        </div>
+        <div class="text-field full-width">
+          <textarea id="defaultSetupNotes" placeholder=" " rows="3"></textarea>
+          <label for="defaultSetupNotes">Default Setup Notes</label>
         </div>
         <div class="card-actions">
           <button class="btn-filled" id="saveSetupBtn">
@@ -486,19 +544,19 @@
         <div class="field-group">
           <div class="text-field">
             <input type="number" id="sfmInput" placeholder=" " inputmode="decimal" />
-            <label for="sfmInput">SFM</label>
+            <label for="sfmInput" id="sfmInputLabel">SFM</label>
           </div>
           <div class="text-field">
             <input type="number" id="diaRpmInput" placeholder=" " step="0.001" inputmode="decimal" />
-            <label for="diaRpmInput">Diameter (in)</label>
+            <label for="diaRpmInput" id="diaRpmLabel">Diameter (in)</label>
           </div>
         </div>
         <div class="result-row" id="rpmResult">
-          <span class="result-label">RPM (from SFM + diameter)</span>
+          <span class="result-label" id="rpmResultLabel">RPM (from SFM + diameter)</span>
           <span class="result-value" id="rpmOut">—</span>
         </div>
         <div class="result-row">
-          <span class="result-label">SFM (from RPM + diameter)</span>
+          <span class="result-label" id="surfaceSpeedResultLabel">SFM (from RPM + diameter)</span>
           <span class="result-value" id="sfmOut">—</span>
         </div>
       </div>
@@ -540,6 +598,54 @@
       <div class="section-header">
         <span class="material-icons-round section-icon">menu_book</span>
         <h2 class="section-title">Reference</h2>
+      </div>
+
+      <!-- Beginner Diagrams -->
+      <div class="card collapsible">
+        <button class="collapse-btn" onclick="toggleCollapse(this)">
+          <span class="material-icons-round">architecture</span>
+          <span>Beginner Diagrams</span>
+          <span class="material-icons-round collapse-arrow">expand_more</span>
+        </button>
+        <div class="collapse-body">
+          <div class="diagram-grid">
+            <div class="diagram-card">
+              <h4>X Diameter vs Radius</h4>
+              <svg viewBox="0 0 260 150" role="img" aria-label="X diameter and radial travel diagram">
+                <line x1="30" y1="75" x2="230" y2="75" class="diagram-axis" />
+                <circle cx="130" cy="75" r="50" class="diagram-part" />
+                <line x1="130" y1="75" x2="180" y2="75" class="diagram-move" />
+                <line x1="80" y1="32" x2="180" y2="32" class="diagram-dim" />
+                <text x="105" y="24">X diameter</text>
+                <text x="145" y="68">radius travel</text>
+              </svg>
+              <p>X diameter is the full part size. Radial travel is half that change, because the tool moves from centerline outward or inward.</p>
+            </div>
+            <div class="diagram-card">
+              <h4>Z Face And Safe Retract</h4>
+              <svg viewBox="0 0 260 150" role="img" aria-label="Z face and safe retract diagram">
+                <rect x="34" y="44" width="56" height="62" class="diagram-chuck" />
+                <rect x="90" y="58" width="100" height="34" class="diagram-part" />
+                <line x1="190" y1="40" x2="190" y2="110" class="diagram-dim" />
+                <path d="M214 104 L214 36 L160 36" class="diagram-safe" />
+                <text x="198" y="78">Z0 face</text>
+                <text x="145" y="28">safe retract</text>
+              </svg>
+              <p>Plan a clear retract path before rapid moves. Move away from jaws, shoulders, chuck, and grooves before moving fast.</p>
+            </div>
+            <div class="diagram-card">
+              <h4>Stickout And Jaws</h4>
+              <svg viewBox="0 0 260 150" role="img" aria-label="Stickout and jaw clearance diagram">
+                <rect x="35" y="38" width="72" height="74" class="diagram-chuck" />
+                <rect x="107" y="62" width="130" height="26" class="diagram-part" />
+                <line x1="107" y1="112" x2="237" y2="112" class="diagram-dim" />
+                <text x="143" y="132">stickout</text>
+                <text x="45" y="32">jaws</text>
+              </svg>
+              <p>Stickout is unsupported material hanging out of the jaws. Longer stickout can chatter, bend, or create clearance risk.</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Setup Tips -->

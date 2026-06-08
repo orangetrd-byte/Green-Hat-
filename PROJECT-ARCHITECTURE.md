@@ -14,6 +14,9 @@ Core scope:
 - beginner definitions
 - speeds and feeds reference
 - handoff notes
+- print-friendly checklist and handoff summaries
+- simple beginner diagrams
+- shop-specific rules and custom checklist items
 - offline mobile PWA behavior
 
 ## Repository Location
@@ -147,7 +150,7 @@ Service worker:
 
 - caches app shell
 - keeps the app available offline
-- uses cache version `green-hat-v2`
+- uses cache version `green-hat-v5`
 - uses network-first navigation for page loads
 - falls back to cached `index.html` when offline
 
@@ -272,6 +275,7 @@ const state = {
   savedSF: [],
   noteLog: [],
   setupData: {},
+  customChecklist: [],
 };
 ```
 
@@ -286,6 +290,7 @@ cnc_helper_jobs
 cnc_helper_sf
 green_hat_note_log
 cnc_helper_setup
+green_hat_custom_checklist
 gh_welcome_dismissed
 ```
 
@@ -301,6 +306,7 @@ Current job shape:
   opNumber: "",
   machineName: "",
   material: "",
+  unitSystem: "imperial",
   setupStatus: "Ready",
   attentionFlag: "",
   lastSetupBy: "",
@@ -309,6 +315,19 @@ Current job shape:
   setupNotes: "",
   savedAt: ""
 }
+```
+
+### `green_hat_custom_checklist`
+
+Array of short shop-specific pre-cut checklist strings.
+
+Shape:
+
+```js
+[
+  "Confirm bar puller is disabled",
+  "Verify tailstock clearance"
+]
 ```
 
 ### `green_hat_note_log`

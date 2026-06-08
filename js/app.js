@@ -14,6 +14,7 @@ const state = {
   savedSF: [],
   noteLog: [],
   setupData: {},
+  customChecklist: [],
 };
 
 // ── Init ───────────────────────────────────
@@ -27,6 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderSavedSF();
   restoreSetup();
   restoreNotes();
+  renderCustomChecklist();
+  updateUnitLabels();
 
   // Scroll → elevate top bar
   window.addEventListener('scroll', () => {
@@ -45,6 +48,7 @@ function loadFromStorage() {
   state.savedSF   = JSON.parse(localStorage.getItem('cnc_helper_sf')   || '[]');
   state.noteLog   = JSON.parse(localStorage.getItem('green_hat_note_log') || '[]');
   state.setupData = JSON.parse(localStorage.getItem('cnc_helper_setup') || '{}');
+  state.customChecklist = JSON.parse(localStorage.getItem('green_hat_custom_checklist') || '[]');
 }
 
 function persist() {
@@ -52,6 +56,7 @@ function persist() {
   localStorage.setItem('cnc_helper_sf',    JSON.stringify(state.savedSF));
   localStorage.setItem('green_hat_note_log', JSON.stringify(state.noteLog));
   localStorage.setItem('cnc_helper_setup', JSON.stringify(state.setupData));
+  localStorage.setItem('green_hat_custom_checklist', JSON.stringify(state.customChecklist));
 }
 
 // ── Navigation ────────────────────────────
@@ -85,6 +90,22 @@ function bindEvents() {
   document.getElementById('addLogBtn').addEventListener('click', addLogEntry);
   document.getElementById('refreshHandoffBtn').addEventListener('click', renderHandoffSummary);
   document.getElementById('exportHandoffBtn').addEventListener('click', exportHandoff);
+  document.getElementById('printHandoffBtn').addEventListener('click', () => printView('handoff'));
+  document.getElementById('printChecklistBtn').addEventListener('click', () => printView('checklist'));
+  document.getElementById('addCustomCheckBtn').addEventListener('click', addCustomCheck);
+  document.getElementById('clearCustomChecksBtn').addEventListener('click', clearCustomChecks);
+  document.getElementById('unitSystem').addEventListener('change', () => {
+    saveUnitSystem();
+    updateUnitLabels();
+    calcRPM();
+    renderHandoffSummary();
+  });
+  document.querySelectorAll('[data-day-nav]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.dayNav;
+      switchNav(key, document.querySelector(`.nav-item[data-nav="${key}"]`));
+    });
+  });
 
   // Menu items
   document.getElementById('newJobBtn').addEventListener('click', () => { newJob(); closeMenu(); });
@@ -124,6 +145,7 @@ function getJobFields() {
     opNumber:    val('opNumber'),
     machineName: val('machineName'),
     material:    val('materialField'),
+    unitSystem:  val('unitSystem') || 'imperial',
     setupStatus: val('setupStatus') || 'Ready',
     attentionFlag: val('attentionFlag'),
     lastSetupBy: val('lastSetupBy'),
@@ -139,12 +161,14 @@ function populateJobFields(job) {
   setVal('opNumber',     job.opNumber);
   setVal('machineName',  job.machineName);
   setVal('materialField',job.material);
+  setVal('unitSystem',   job.unitSystem || state.setupData.unitSystem || 'imperial');
   setVal('setupStatus',  job.setupStatus || 'Ready');
   setVal('attentionFlag',job.attentionFlag);
   setVal('lastSetupBy',  job.lastSetupBy);
   setVal('lastRunBy',    job.lastRunBy);
   setVal('toolNotes',    job.toolNotes);
   setVal('setupNotes',   job.setupNotes);
+  updateUnitLabels();
   renderHandoffSummary();
 }
 
@@ -279,12 +303,15 @@ function renderHandoffSummary() {
     ['Operation', job.opNumber || '—'],
     ['Machine / Cell', job.machineName || '—'],
     ['Material', job.material || '—'],
+    ['Units', job.unitSystem === 'metric' ? 'Metric - mm / m/min' : 'Imperial - inch / SFM'],
     ['Setup Status', job.setupStatus || 'Ready'],
     ['Attention Flag', job.attentionFlag || 'None'],
     ['Last Setup By', job.lastSetupBy || '—'],
     ['Last Run By', job.lastRunBy || '—'],
     ['Tool Notes', job.toolNotes || '—'],
     ['Setup Notes', job.setupNotes || '—'],
+    ['Shop Rules', data.setup.shopRules || '—'],
+    ['Default Setup Notes', data.setup.defaultSetupNotes || '—'],
     ['Last Log', data.lastLog ? `${data.lastLog.time}: ${data.lastLog.text}` : 'None'],
   ];
   el.innerHTML = rows.map(([label, value]) => `
@@ -360,6 +387,7 @@ function goStep(n) {
 }
 
 function calcMove() {
+  const units = lengthUnit();
   const touchDia = parseFloat(val('touchDia'));
   const targetDia = parseFloat(val('targetDia'));
   const zFace = parseFloat(val('zFace')) || 0;
@@ -399,22 +427,22 @@ function calcMove() {
     <div class="result-card">
       <div class="result-card-label">X Target (dia)</div>
       <div class="result-card-value">${fmt(targetDia)}</div>
-      <div class="result-card-unit">in diameter · ${direction}</div>
+      <div class="result-card-unit">${units} diameter · ${direction}</div>
     </div>
     <div class="result-card">
       <div class="result-card-label">X Move (dia)</div>
       <div class="result-card-value">${xDiameterMove >= 0 ? '+' : ''}${fmt(xDiameterMove)}</div>
-      <div class="result-card-unit">in diameter</div>
+      <div class="result-card-unit">${units} diameter</div>
     </div>
     <div class="result-card">
       <div class="result-card-label">Radial Travel</div>
       <div class="result-card-value">${radialTravel >= 0 ? '+' : ''}${fmt(radialTravel)}</div>
-      <div class="result-card-unit">in (physical tool move)</div>
+      <div class="result-card-unit">${units} (physical tool move)</div>
     </div>
     <div class="result-card">
       <div class="result-card-label">Z Face</div>
       <div class="result-card-value">${fmt(zMove)}</div>
-      <div class="result-card-unit">in ${plunge ? '+ ' + fmt(plunge) + ' plunge' : ''}</div>
+      <div class="result-card-unit">${units} ${plunge ? '+ ' + fmt(plunge) + ' plunge' : ''}</div>
     </div>
   `;
 
@@ -449,6 +477,7 @@ function updateCheckProgress() {
 // ── Setup Reference ────────────────────────
 function saveSetup() {
   state.setupData = {
+    unitSystem:      val('unitSystem') || 'imperial',
     workOffset:      val('workOffset'),
     stockDia:        val('stockDia'),
     stockLen:        val('stockLen'),
@@ -457,6 +486,8 @@ function saveSetup() {
     coolant:         val('coolant'),
     inspectionNotes: val('inspectionNotes'),
     refNotes:        val('refNotes'),
+    shopRules:       val('shopRules'),
+    defaultSetupNotes: val('defaultSetupNotes'),
   };
   persist();
   setActionStatus('Setup reference saved on this device.');
@@ -466,6 +497,7 @@ function saveSetup() {
 function restoreSetup() {
   const s = state.setupData;
   if (!s) return;
+  setVal('unitSystem',      s.unitSystem || 'imperial');
   setVal('workOffset',      s.workOffset);
   setVal('stockDia',        s.stockDia);
   setVal('stockLen',        s.stockLen);
@@ -474,6 +506,80 @@ function restoreSetup() {
   setVal('coolant',         s.coolant);
   setVal('inspectionNotes', s.inspectionNotes);
   setVal('refNotes',        s.refNotes);
+  setVal('shopRules',       s.shopRules);
+  setVal('defaultSetupNotes', s.defaultSetupNotes);
+  updateUnitLabels();
+}
+
+function currentUnitSystem() {
+  return val('unitSystem') || state.setupData.unitSystem || 'imperial';
+}
+
+function lengthUnit() {
+  return currentUnitSystem() === 'metric' ? 'mm' : 'in';
+}
+
+function saveUnitSystem() {
+  state.setupData = { ...state.setupData, unitSystem: currentUnitSystem() };
+  persist();
+}
+
+function updateUnitLabels() {
+  const unit = lengthUnit();
+  const metric = currentUnitSystem() === 'metric';
+  setLabel('touchDiaLabel', `Touch-Off Diameter (${unit})`);
+  setLabel('targetDiaLabel', `Target Diameter (${unit})`);
+  setLabel('zFaceLabel', `Z Face (${unit})`);
+  setLabel('plungeDepthLabel', `Plunge Depth (${unit})`);
+  setLabel('stockDiaLabel', `Stock Diameter (${unit})`);
+  setLabel('stockLenLabel', `Stock Length (${unit})`);
+  setLabel('stickoutLabel', `Stickout (${unit})`);
+  setLabel('sfmInputLabel', metric ? 'Surface Speed (m/min)' : 'SFM');
+  setLabel('diaRpmLabel', `Diameter (${unit})`);
+  setLabel('rpmResultLabel', metric ? 'RPM (from m/min + diameter)' : 'RPM (from SFM + diameter)');
+  setLabel('surfaceSpeedResultLabel', metric ? 'm/min (from RPM + diameter)' : 'SFM (from RPM + diameter)');
+}
+
+// Custom checklist items are intentionally short and plain-language.
+function addCustomCheck() {
+  const text = val('customCheckText');
+  if (!text) { showToast('Enter a checklist item first'); return; }
+  state.customChecklist.push(text);
+  state.customChecklist = [...new Set(state.customChecklist)].slice(0, 12);
+  setVal('customCheckText', '');
+  persist();
+  renderCustomChecklist();
+  setActionStatus('Custom checklist item saved on this device.');
+  showToast('Checklist item added');
+}
+
+function clearCustomChecks() {
+  if (!state.customChecklist.length) { showToast('No custom checks to clear'); return; }
+  if (!confirm('Clear all shop-specific checklist items?')) return;
+  state.customChecklist = [];
+  persist();
+  renderCustomChecklist();
+  showToast('Custom checks cleared');
+}
+
+function renderCustomChecklist() {
+  const list = document.getElementById('verifyChecklist');
+  if (!list) return;
+  list.querySelectorAll('.custom-check-item').forEach(el => el.remove());
+  state.customChecklist.forEach(text => {
+    const item = document.createElement('div');
+    item.className = 'check-item custom-check-item';
+    item.onclick = () => toggleCheck(item);
+    item.innerHTML = `<div class="check-box"><span class="material-icons-round">check</span></div><span>${esc(text)}</span>`;
+    list.appendChild(item);
+  });
+  updateCheckProgress();
+}
+
+function printView(mode) {
+  document.body.classList.add(`print-${mode}`);
+  window.print();
+  setTimeout(() => document.body.classList.remove(`print-${mode}`), 400);
 }
 
 // ── Welcome Banner ────────────────────────
@@ -489,24 +595,20 @@ function dismissWelcome() {
 
 // ── Speeds & Feeds ─────────────────────────
 function calcRPM() {
-  const sfm  = parseFloat(val('sfmInput'));
-  const dia  = parseFloat(val('diaRpmInput'));
+  const speed = parseFloat(val('sfmInput'));
+  const dia = parseFloat(val('diaRpmInput'));
+  const metric = currentUnitSystem() === 'metric';
 
-  if (!isNaN(sfm) && !isNaN(dia) && dia > 0) {
-    const rpm = (sfm * 3.82) / dia;
+  if (!isNaN(speed) && !isNaN(dia) && dia > 0) {
+    const rpm = metric ? (speed * 1000) / (Math.PI * dia) : (speed * 3.82) / dia;
     document.getElementById('rpmOut').textContent = Math.round(rpm).toLocaleString() + ' RPM';
-    // Reverse: SFM from that RPM + diameter
-    const sfmBack = (Math.round(rpm) * dia) / 3.82;
-    document.getElementById('sfmOut').textContent = Math.round(sfmBack).toLocaleString() + ' SFM';
-  } else if (!isNaN(dia) && isNaN(sfm)) {
-    document.getElementById('rpmOut').textContent = '—';
-    document.getElementById('sfmOut').textContent = '—';
+    const speedBack = metric ? (Math.round(rpm) * Math.PI * dia) / 1000 : (Math.round(rpm) * dia) / 3.82;
+    document.getElementById('sfmOut').textContent = Math.round(speedBack).toLocaleString() + (metric ? ' m/min' : ' SFM');
   } else {
-    document.getElementById('rpmOut').textContent = '—';
-    document.getElementById('sfmOut').textContent = '—';
+    document.getElementById('rpmOut').textContent = '---';
+    document.getElementById('sfmOut').textContent = '---';
   }
 }
-
 function saveSF() {
   const label   = val('sfLabel');
   const spindle = val('sfSpindle');
@@ -562,6 +664,7 @@ function exportJSON() {
     sf:    state.savedSF,
     noteLog: state.noteLog,
     setup: state.setupData,
+    customChecklist: state.customChecklist,
     exportedAt: new Date().toISOString(),
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -586,10 +689,12 @@ function importJSON(e) {
       if (data.sf)    state.savedSF   = data.sf;
       if (data.noteLog) state.noteLog = data.noteLog;
       if (data.setup) state.setupData = data.setup;
+      if (data.customChecklist) state.customChecklist = data.customChecklist;
       persist();
       renderSavedJobsInline();
       renderSavedSF();
       renderNoteLog();
+      renderCustomChecklist();
       restoreSetup();
       renderHandoffSummary();
       setActionStatus('Import complete. Jobs, notes, speeds/feeds, and setup reference were restored from the JSON file.');
@@ -609,10 +714,14 @@ function clearAll() {
   state.savedSF   = [];
   state.noteLog   = [];
   state.setupData = {};
+  state.customChecklist = [];
   persist();
+  setVal('unitSystem', 'imperial');
+  updateUnitLabels();
   renderSavedJobsInline();
   renderSavedSF();
   renderNoteLog();
+  renderCustomChecklist();
   newJob();
   setActionStatus('All saved Green Hat data has been cleared from this device.');
   showToast('All data cleared');
@@ -627,6 +736,11 @@ function val(id) {
 function setVal(id, v) {
   const el = document.getElementById(id);
   if (el) el.value = v || '';
+}
+
+function setLabel(id, text) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text;
 }
 
 function fmt(n, d = 4) {

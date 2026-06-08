@@ -66,6 +66,12 @@ These apps are complementary, not redundant. Green Hat intentionally stays focus
 - RPM/SFM calculator
 - Custom saved speeds/feeds
 - Beginner definitions for common setup and control terms
+- Print-friendly checklist and handoff summary
+- Simple offline diagrams for X diameter/radius, Z face, safe retract, stickout, and jaws
+- Metric/imperial unit toggle for touch-off and RPM calculations
+- Shop-specific rules and default setup notes
+- Custom pre-cut checklist items
+- Optional Day 1 guided path for brand new operators
 - Offline-capable PWA behavior after first load
 
 ## Design Rules
@@ -147,13 +153,9 @@ Before adding a feature, ask:
 
 ## Planned / Possible Future Work
 
-- Print-friendly checklist and handoff summary
-- Simple diagrams for X diameter/radius, Z face, safe retract, stickout, and jaw clearance
-- Metric/imperial toggle
-- Shop-specific rules and default notes
-- Custom checklist items
-- Optional Day 1 guided mode
 - Control-specific walkthrough notes where safe and clearly labeled
+- More beginner diagrams if they clarify a real setup risk
+- More shop-floor print layouts
 
 ## Related Apps
 
