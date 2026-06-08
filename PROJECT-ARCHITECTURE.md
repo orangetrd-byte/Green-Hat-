@@ -84,7 +84,7 @@ Defines the app shell and all page sections:
 - touch-off wizard section
 - setup reference section
 - speeds and feeds section
-- reference section
+- safety basics section
 - bottom navigation
 - load job modal
 - toast container
@@ -103,7 +103,7 @@ Defines the full visual system:
 - bottom navigation
 - wizard progress
 - checklist UI
-- collapsible reference sections
+- collapsible safety basics sections
 - saved job cards
 - note log
 - handoff summary
@@ -127,7 +127,7 @@ Contains all runtime behavior:
 - welcome banner
 - speeds/RPM calculator
 - custom speeds and feeds
-- collapsible reference sections
+- collapsible safety basics sections
 - JSON export/import
 - service worker registration
 
@@ -150,7 +150,7 @@ Service worker:
 
 - caches app shell
 - keeps the app available offline
-- uses cache version `green-hat-v9`
+- uses cache version `green-hat-v10`
 - uses network-first navigation for page loads
 - falls back to cached `index.html` when offline
 
@@ -247,11 +247,11 @@ Includes:
 - SFM from calculated RPM and diameter
 - saved custom speeds and feeds
 
-### Reference
+### Safety Basics
 
 Purpose:
 
-Plain-English reference material, kept collapsible for mobile use.
+Plain-English safety basics, kept collapsible for mobile use and limited to beginner checks.
 
 Sections:
 
@@ -261,6 +261,16 @@ Sections:
 - Safe Approach & Retract
 - Symbols & G-code Meanings
 - Thread Basics
+
+Drawing rule:
+
+Every drawing in Green Hat must answer:
+
+```text
+What should a beginner check before moving the machine?
+```
+
+If the drawing does not directly support that question, it belongs in CNC Work Helper instead.
 
 ## State Model
 
@@ -497,7 +507,7 @@ Kept from Green Hat:
 - welcome banner
 - speeds reference table
 - RPM/SFM calculator
-- collapsible reference layout
+- collapsible safety basics layout
 
 Merged from Helper:
 
@@ -553,7 +563,7 @@ After changes:
    - refresh handoff summary
    - navigate touch-off wizard
    - calculate a move
-   - open reference collapsibles
+   - open safety basics collapsibles
 8. Confirm GitHub Pages serves updated `index.html`.
 9. Confirm GitHub Pages serves current `sw.js` cache version.
 

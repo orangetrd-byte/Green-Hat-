@@ -48,7 +48,7 @@ These apps are complementary, not redundant. Green Hat intentionally stays focus
 | Touch-Off | 4-step wizard: Measure, Target, Move Result, Verify |
 | Setup Reference | Work offset, stock info, chuck/jaws, coolant, inspection notes, reference notes |
 | Speeds & Feeds | Material starting points, RPM/SFM calculator, saved custom speeds/feeds |
-| Reference | Beginner definitions, setup tips, touch-off tips, safe approach/retract, symbols and G-code meanings, thread basics |
+| Safety Basics | Beginner definitions, setup tips, touch-off tips, safe approach/retract, visual checks, symbols and basic G-code meanings |
 
 ## Current Features
 
@@ -150,6 +150,16 @@ Before adding a feature, ask:
 3. Does this require a server, account, login, or cloud sync?
 4. Does it improve the existing beginner flow?
 5. Does it still work offline?
+
+Drawing rule:
+
+Every drawing in Green Hat must answer this question:
+
+```text
+What should a beginner check before moving the machine?
+```
+
+If a drawing does not directly support that question, it belongs in CNC Work Helper instead.
 
 ## Planned / Possible Future Work
 
