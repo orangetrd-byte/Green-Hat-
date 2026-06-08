@@ -150,7 +150,7 @@ Service worker:
 
 - caches app shell
 - keeps the app available offline
-- uses cache version `green-hat-v7`
+- uses cache version `green-hat-v9`
 - uses network-first navigation for page loads
 - falls back to cached `index.html` when offline
 

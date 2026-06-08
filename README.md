@@ -67,7 +67,7 @@ These apps are complementary, not redundant. Green Hat intentionally stays focus
 - Custom saved speeds/feeds
 - Beginner definitions for common setup and control terms
 - Print-friendly checklist and handoff summary
-- Simple offline diagrams for X diameter/radius, Z face, safe retract, stickout, and jaws
+- Expanded offline visual guide diagrams for lathe setup overview, touch-off diameter, X diameter/radius, Z direction, jaw clearance, and safe rapid/feed paths
 - Metric/imperial unit toggle for touch-off and RPM calculations
 - Shop-specific rules and default setup notes
 - Custom pre-cut checklist items

@@ -610,39 +610,109 @@
         <div class="collapse-body">
           <div class="diagram-grid">
             <div class="diagram-card">
-              <h4>X Diameter vs Radius</h4>
-              <svg viewBox="0 0 260 150" role="img" aria-label="X diameter and radial travel diagram">
-                <line x1="30" y1="75" x2="230" y2="75" class="diagram-axis" />
-                <circle cx="130" cy="75" r="50" class="diagram-part" />
-                <line x1="130" y1="75" x2="180" y2="75" class="diagram-move" />
-                <line x1="80" y1="32" x2="180" y2="32" class="diagram-dim" />
-                <text x="105" y="24">X diameter</text>
-                <text x="145" y="68">radius travel</text>
+              <h4>Lathe Setup Overview</h4>
+              <svg viewBox="0 0 520 220" role="img" aria-label="Simple lathe diagram showing chuck, jaws, part, tool tip, X axis, and Z axis">
+                <line x1="46" y1="112" x2="468" y2="112" class="diagram-axis" />
+                <rect x="58" y="58" width="78" height="108" rx="8" class="diagram-chuck" />
+                <line x1="94" y1="66" x2="112" y2="100" class="diagram-dim" />
+                <line x1="70" y1="112" x2="112" y2="112" class="diagram-dim" />
+                <line x1="94" y1="158" x2="112" y2="124" class="diagram-dim" />
+                <rect x="136" y="82" width="156" height="60" rx="30" class="diagram-part" />
+                <rect x="370" y="132" width="66" height="46" rx="8" class="diagram-tool" />
+                <path d="M370 132 L300 112 L370 92" class="diagram-tool-line" />
+                <line x1="306" y1="112" x2="286" y2="112" class="diagram-tool-line" />
+                <line x1="322" y1="112" x2="410" y2="112" class="diagram-safe" />
+                <polyline points="410,112 398,104 398,120" class="diagram-safe" />
+                <line x1="214" y1="82" x2="214" y2="34" class="diagram-move" />
+                <polyline points="214,34 206,48 222,48" class="diagram-move" />
+                <text x="66" y="42">Chuck</text>
+                <text x="78" y="190">Jaws</text>
+                <text x="184" y="75">Part</text>
+                <text x="352" y="86">Tool tip</text>
+                <text x="416" y="105">Z</text>
+                <text x="222" y="44">X</text>
               </svg>
-              <p>X diameter is the full part size. Radial travel is half that change, because the tool moves from centerline outward or inward.</p>
+              <p>Know what you are looking at before moving: chuck, jaws, part, tool tip, X direction, and Z direction.</p>
             </div>
             <div class="diagram-card">
-              <h4>Z Face And Safe Retract</h4>
-              <svg viewBox="0 0 260 150" role="img" aria-label="Z face and safe retract diagram">
-                <rect x="34" y="44" width="56" height="62" class="diagram-chuck" />
-                <rect x="90" y="58" width="100" height="34" class="diagram-part" />
-                <line x1="190" y1="40" x2="190" y2="110" class="diagram-dim" />
-                <path d="M214 104 L214 36 L160 36" class="diagram-safe" />
-                <text x="198" y="78">Z0 face</text>
-                <text x="145" y="28">safe retract</text>
+              <h4>Touch-Off Diameter</h4>
+              <svg viewBox="0 0 520 220" role="img" aria-label="Touch-off diameter diagram showing stock diameter measured with calipers">
+                <circle cx="250" cy="108" r="64" class="diagram-part" />
+                <line x1="186" y1="108" x2="314" y2="108" class="diagram-dim" />
+                <polyline points="186,108 200,100 200,116" class="diagram-dim" />
+                <polyline points="314,108 300,100 300,116" class="diagram-dim" />
+                <path d="M420 60 L332 108 L420 156" class="diagram-tool-line" />
+                <line x1="332" y1="108" x2="314" y2="108" class="diagram-tool-line" />
+                <text x="116" y="196">Measure this diameter</text>
+                <text x="354" y="52">Tool tip</text>
               </svg>
-              <p>Plan a clear retract path before rapid moves. Move away from jaws, shoulders, chuck, and grooves before moving fast.</p>
+              <p>For X diameter touch-off, measure the actual diameter where the tool touched. Do not guess from stock size.</p>
             </div>
             <div class="diagram-card">
-              <h4>Stickout And Jaws</h4>
-              <svg viewBox="0 0 260 150" role="img" aria-label="Stickout and jaw clearance diagram">
-                <rect x="35" y="38" width="72" height="74" class="diagram-chuck" />
-                <rect x="107" y="62" width="130" height="26" class="diagram-part" />
-                <line x1="107" y1="112" x2="237" y2="112" class="diagram-dim" />
-                <text x="143" y="132">stickout</text>
-                <text x="45" y="32">jaws</text>
+              <h4>X Diameter vs X Radius</h4>
+              <svg viewBox="0 0 520 230" role="img" aria-label="X diameter versus X radius mode diagram">
+                <circle cx="250" cy="102" r="64" class="diagram-part" />
+                <line x1="186" y1="102" x2="314" y2="102" class="diagram-dim" />
+                <polyline points="186,102 200,94 200,110" class="diagram-dim" />
+                <polyline points="314,102 300,94 300,110" class="diagram-dim" />
+                <line x1="250" y1="102" x2="314" y2="102" class="diagram-move" />
+                <path d="M250 102 L250 166" class="diagram-axis" />
+                <text x="116" y="188">X diameter = full width</text>
+                <text x="270" y="82">X radius = half width</text>
+                <text x="96" y="214">Verify mode before entering offsets.</text>
               </svg>
-              <p>Stickout is unsupported material hanging out of the jaws. Longer stickout can chatter, bend, or create clearance risk.</p>
+              <p>Most lathes use diameter mode, but some controls can use radius mode. A diameter correction is twice a radius correction.</p>
+            </div>
+            <div class="diagram-card">
+              <h4>Z Direction And Face</h4>
+              <svg viewBox="0 0 520 200" role="img" aria-label="Z direction diagram showing negative Z toward chuck and positive Z away from chuck">
+                <rect x="60" y="54" width="78" height="92" rx="8" class="diagram-chuck" />
+                <rect x="138" y="78" width="170" height="44" rx="22" class="diagram-part" />
+                <line x1="160" y1="100" x2="450" y2="100" class="diagram-dim" />
+                <polyline points="160,100 174,92 174,108" class="diagram-dim" />
+                <polyline points="450,100 436,92 436,108" class="diagram-dim" />
+                <line x1="308" y1="62" x2="308" y2="138" class="diagram-move" />
+                <text x="72" y="44">Chuck</text>
+                <text x="178" y="72">Part face</text>
+                <text x="116" y="168">Z- toward chuck</text>
+                <text x="332" y="168">Z+ away</text>
+                <text x="116" y="188">Verify direction on the control.</text>
+              </svg>
+              <p>Z face is commonly the work zero face. Confirm which direction is positive or negative before jogging.</p>
+            </div>
+            <div class="diagram-card">
+              <h4>Jaw Clearance</h4>
+              <svg viewBox="0 0 520 190" role="img" aria-label="Chuck jaw clearance diagram showing tool path near jaws">
+                <rect x="60" y="48" width="84" height="96" rx="8" class="diagram-chuck" />
+                <line x1="98" y1="56" x2="122" y2="86" class="diagram-dim" />
+                <line x1="74" y1="96" x2="122" y2="96" class="diagram-dim" />
+                <line x1="98" y1="136" x2="122" y2="106" class="diagram-dim" />
+                <rect x="144" y="72" width="142" height="48" rx="24" class="diagram-part" />
+                <path d="M384 58 L298 96 L384 134" class="diagram-danger" />
+                <line x1="298" y1="96" x2="280" y2="96" class="diagram-danger" />
+                <path d="M290 140 C230 166 160 166 112 140" class="diagram-axis" />
+                <text x="58" y="36">Chuck jaws</text>
+                <text x="168" y="66">Part</text>
+                <text x="310" y="48">Tool clearance</text>
+                <text x="96" y="176">Keep the tool clear of jaws.</text>
+              </svg>
+              <p>Jaws are a crash risk. Check jaw location before touch-off, rapid moves, tool changes, or restarts.</p>
+            </div>
+            <div class="diagram-card">
+              <h4>Rapid Clear, Feed Near Part</h4>
+              <svg viewBox="0 0 520 200" role="img" aria-label="Safe rapid and feed path diagram">
+                <rect x="84" y="80" width="190" height="52" rx="26" class="diagram-part" />
+                <path d="M390 48 L320 48 L320 106 L274 106" class="diagram-safe" />
+                <path d="M274 106 L236 106" class="diagram-move" />
+                <path d="M236 106 L236 48 L390 48" class="diagram-axis" />
+                <polyline points="320,106 308,98 308,114" class="diagram-safe" />
+                <polyline points="236,48 248,40 248,56" class="diagram-axis" />
+                <text x="78" y="72">Stock</text>
+                <text x="302" y="38">Rapid clear</text>
+                <text x="218" y="154">Feed near part</text>
+                <text x="94" y="182">Rapid away from stock. Feed near the cut.</text>
+              </svg>
+              <p>Rapid only when the tool is safely clear. Feed when close to the part and proving the first move.</p>
             </div>
           </div>
         </div>
@@ -801,7 +871,7 @@
         </div>
       </div>
 
-      <div class="app-version">Green Hat version 1.6 · PWA cache green-hat-v7</div>
+      <div class="app-version">Green Hat version 1.7 · PWA cache green-hat-v9</div>
 
     </section>
 

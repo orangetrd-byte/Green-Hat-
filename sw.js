@@ -1,4 +1,4 @@
-const CACHE = 'green-hat-v8-update-helper';
+const CACHE = 'green-hat-v9';
 const ASSETS = [
   './',
   './index.html',
