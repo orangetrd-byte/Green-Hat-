@@ -185,7 +185,7 @@ function saveCurrentJob() {
   updateJobBadge();
   renderSavedJobsInline();
   renderHandoffSummary();
-  setActionStatus(`Saved ${job.partNumber} on this device. Export JSON if you need a backup or another device.`);
+  setActionStatus(`Saved ${job.partNumber} on this device. Export Backup if you need a file or another device.`);
   showToast(`Saved: ${job.partNumber}`);
 }
 
@@ -205,7 +205,7 @@ function renderSavedJobsInline() {
         <div class="saved-item-sub">${esc(j.opNumber || '')} ${j.machineName ? '· ' + esc(j.machineName) : ''} · ${esc(j.setupStatus || 'Ready')} · ${esc(j.savedAt || '')}</div>
       </div>
       <div class="saved-item-actions">
-        <button class="icon-btn" onclick="loadJob(${i})" title="Load"><span class="material-icons-round">folder_open</span></button>
+        <button class="icon-btn" onclick="loadJob(${i})" title="Load from Device"><span class="material-icons-round">folder_open</span></button>
         <button class="icon-btn" onclick="deleteJob(${i})" title="Delete"><span class="material-icons-round">delete_outline</span></button>
       </div>
     </div>

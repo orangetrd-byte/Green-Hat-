@@ -26,7 +26,7 @@
         <span class="app-subtitle" id="jobBadge"></span>
       </div>
       <div class="app-bar-actions">
-        <button class="icon-btn" id="saveBtn" title="Save Job" aria-label="Save job">
+        <button class="icon-btn" id="saveBtn" title="Save to Device" aria-label="Save to device">
           <span class="material-icons-round">save</span>
         </button>
         <button class="icon-btn" id="menuBtn" title="More options" aria-label="More options">
@@ -39,9 +39,9 @@
   <!-- Overflow Menu -->
   <div class="overflow-menu" id="overflowMenu">
     <button class="menu-item" id="newJobBtn"><span class="material-icons-round">add_circle_outline</span> New Job</button>
-    <button class="menu-item" id="loadJobBtn"><span class="material-icons-round">folder_open</span> Load Job</button>
-    <button class="menu-item" id="exportBtn"><span class="material-icons-round">download</span> Export JSON</button>
-    <button class="menu-item" id="importBtn"><span class="material-icons-round">upload</span> Import JSON</button>
+    <button class="menu-item" id="loadJobBtn"><span class="material-icons-round">folder_open</span> Load from Device</button>
+    <button class="menu-item" id="exportBtn"><span class="material-icons-round">download</span> Export Backup</button>
+    <button class="menu-item" id="importBtn"><span class="material-icons-round">upload</span> Import Backup</button>
     <input type="file" id="importFile" accept=".json" style="display:none" />
     <div class="menu-divider"></div>
     <button class="menu-item danger" id="clearBtn"><span class="material-icons-round">delete_outline</span> Clear All Data</button>
@@ -149,7 +149,7 @@
         </div>
         <div class="info-chip">
           <span class="material-icons-round">save_alt</span>
-          <span><strong>Stored on this device:</strong> Save Job, log entries, speeds, feeds, and setup reference data are saved in this browser using local storage. Export JSON before clearing data or switching devices.</span>
+          <span><strong>Stored on this device:</strong> Save to Device keeps jobs, log entries, speeds, feeds, and setup reference data in this browser. Use Export Backup before clearing data or switching devices.</span>
         </div>
         <div class="text-field full-width">
           <textarea id="toolNotes" placeholder=" " rows="3"></textarea>
@@ -161,10 +161,10 @@
         </div>
         <div class="card-actions">
           <button class="btn-filled" id="saveJobInline">
-            <span class="material-icons-round">save</span> Save Job
+            <span class="material-icons-round">save</span> Save to Device
           </button>
           <button class="btn-tonal" id="loadJobInline">
-            <span class="material-icons-round">folder_open</span> Load
+            <span class="material-icons-round">folder_open</span> Load from Device
           </button>
         </div>
         <div class="log-action-block">
@@ -850,7 +850,7 @@
         </div>
       </div>
 
-      <div class="app-version">Green Hat version 1.10 · PWA cache green-hat-v12</div>
+      <div class="app-version">Green Hat version 1.11 · PWA cache green-hat-v13</div>
 
     </section>
 
@@ -884,7 +884,7 @@
   <div class="modal-backdrop" id="loadModal" style="display:none">
     <div class="modal">
       <div class="modal-header">
-        <h3>Load Job</h3>
+        <h3>Load from Device</h3>
         <button class="icon-btn" onclick="closeLoadModal()"><span class="material-icons-round">close</span></button>
       </div>
       <div class="modal-body" id="loadJobListModal">
