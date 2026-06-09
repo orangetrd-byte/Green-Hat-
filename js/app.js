@@ -85,6 +85,7 @@ function bindEvents() {
 
   // Save/load shortcuts
   document.getElementById('saveBtn').addEventListener('click', saveCurrentJob);
+  document.getElementById('partNumber').addEventListener('input', updateJobBadge);
   document.getElementById('saveJobInline').addEventListener('click', saveCurrentJob);
   document.getElementById('loadJobInline').addEventListener('click', openLoadModal);
   document.getElementById('addLogBtn').addEventListener('click', addLogEntry);
@@ -190,7 +191,7 @@ function saveCurrentJob() {
 
 function updateJobBadge() {
   const pn = val('partNumber');
-  document.getElementById('jobBadge').textContent = pn ? pn : '';
+  document.getElementById('jobBadge').textContent = pn ? `Part ${pn}` : '';
 }
 
 function renderSavedJobsInline() {
