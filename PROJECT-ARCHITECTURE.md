@@ -150,7 +150,7 @@ Service worker:
 
 - caches app shell
 - keeps the app available offline
-- uses cache version `green-hat-v10`
+- uses cache version `green-hat-v11`
 - uses network-first navigation for page loads
 - falls back to cached `index.html` when offline
 
@@ -251,7 +251,7 @@ Includes:
 
 Purpose:
 
-Plain-English safety basics, kept collapsible for mobile use and limited to beginner checks.
+Plain-English safety basics, kept collapsible for mobile use and limited to beginner checks before moving the machine. Advanced operations such as threading belong in CNC Work Helper.
 
 Sections:
 
@@ -259,8 +259,7 @@ Sections:
 - Lathe Setup Tips
 - Touch-Off Tips
 - Safe Approach & Retract
-- Symbols & G-code Meanings
-- Thread Basics
+- Basic Symbols & Meanings
 
 Drawing rule:
 

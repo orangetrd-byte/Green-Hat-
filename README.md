@@ -48,7 +48,7 @@ These apps are complementary, not redundant. Green Hat intentionally stays focus
 | Touch-Off | 4-step wizard: Measure, Target, Move Result, Verify |
 | Setup Reference | Work offset, stock info, chuck/jaws, coolant, inspection notes, reference notes |
 | Speeds & Feeds | Material starting points, RPM/SFM calculator, saved custom speeds/feeds |
-| Safety Basics | Beginner definitions, setup tips, touch-off tips, safe approach/retract, visual checks, symbols and basic G-code meanings |
+| Safety Basics | Beginner definitions, setup tips, touch-off tips, safe approach/retract, visual checks, and basic symbols only |
 
 ## Current Features
 
