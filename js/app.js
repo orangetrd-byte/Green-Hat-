@@ -185,7 +185,7 @@ function saveCurrentJob() {
   updateJobBadge();
   renderSavedJobsInline();
   renderHandoffSummary();
-  setActionStatus(`Saved ${job.partNumber} on this device. Export Backup if you need a file or another device.`);
+  setActionStatus(`Saved ${job.partNumber} to this device. Use Export Backup if this setup matters or needs to move.`);
   showToast(`Saved: ${job.partNumber}`);
 }
 
@@ -196,7 +196,7 @@ function updateJobBadge() {
 
 function renderSavedJobsInline() {
   const el = document.getElementById('savedJobsList');
-  if (!state.savedJobs.length) { el.innerHTML = '<p class="empty-state">No saved jobs yet. Save this job to keep it on this device.</p>'; return; }
+  if (!state.savedJobs.length) { el.innerHTML = '<p class="empty-state">No saved jobs yet. Use Save to Device to keep this setup in this browser.</p>'; return; }
 
   el.innerHTML = state.savedJobs.map((j, i) => `
     <div class="saved-item">
@@ -262,7 +262,7 @@ function addLogEntry() {
   persist();
   renderNoteLog();
   renderHandoffSummary();
-  setActionStatus('Shift handoff log entry added. It is saved on this device and included in JSON export.');
+  setActionStatus('Shift handoff log entry added. It is saved on this device and included in Export Backup.');
   showToast('Log entry added');
 }
 
@@ -333,7 +333,7 @@ function exportHandoff() {
   a.download = `${name}-handoff-${datestamp()}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  setActionStatus('Handoff summary exported as JSON. Keep it with the setup or shift notes.');
+  setActionStatus('Handoff summary exported. Keep the file with the setup or shift notes.');
   showToast('Handoff exported');
 }
 
@@ -672,10 +672,10 @@ function exportJSON() {
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = `cnc-helper-${datestamp()}.json`;
+  a.download = `green-hat-backup-${datestamp()}.json`;
   a.click();
   URL.revokeObjectURL(url);
-  setActionStatus('Full Green Hat backup exported as JSON. Use this before clearing data or changing devices.');
+  setActionStatus('Backup file exported. Keep it somewhere safe before clearing data or changing devices.');
   showToast('Exported');
 }
 
@@ -698,10 +698,10 @@ function importJSON(e) {
       renderCustomChecklist();
       restoreSetup();
       renderHandoffSummary();
-      setActionStatus('Import complete. Jobs, notes, speeds/feeds, and setup reference were restored from the JSON file.');
+      setActionStatus('Import complete. Jobs, notes, speeds/feeds, and setup reference were restored from the backup file.');
       showToast('Imported successfully');
     } catch {
-      setActionStatus('Import failed. Choose a Green Hat JSON backup file.');
+      setActionStatus('Import failed. Choose a Green Hat backup file.');
       showToast('Import failed — invalid file');
     }
   };

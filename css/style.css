@@ -111,6 +111,10 @@ body {
   font-size: 13px;
   color: var(--md-secondary);
   font-weight: 500;
+  max-width: min(34vw, 180px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .app-bar-actions {
@@ -263,6 +267,14 @@ body {
   justify-content: flex-end;
   margin-top: 16px;
   flex-wrap: wrap;
+}
+
+.save-backup-note {
+  margin: 8px 0 0;
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: right;
 }
 
 .log-action-block {
