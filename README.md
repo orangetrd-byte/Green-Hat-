@@ -2,7 +2,7 @@
 
 Beginner CNC lathe touch-off and setup companion.
 
-Green Hat is a mobile-first PWA for new CNC lathe operators, students, hobbyists, and shop-floor users who need plain-English guidance at the machine. It focuses on safe touch-off, setup notes, handoff logs, basic reference, and pre-cut verification.
+Green Hat is a mobile-first PWA for true beginners: people who may know nothing about CNC, lathes, tooling, offsets, setup steps, or shop terminology. It gives plain-English guidance at the machine and focuses on safe touch-off, setup notes, handoff logs, basic reference, and pre-cut verification.
 
 Live app: https://orangetrd-byte.github.io/Green-Hat-/
 
@@ -10,7 +10,7 @@ Live app: https://orangetrd-byte.github.io/Green-Hat-/
 
 Green Hat is a beginner-focused CNC lathe companion PWA for operators who are new to setup and touch-off. It runs in the browser with no login, no server, and no cloud account.
 
-The target user is someone in their first weeks of lathe work. They may be standing at the machine, unsure what to check next. Green Hat slows the process down and walks them through it.
+The target user is someone in their first days or weeks of lathe work. They may not know the trade vocabulary yet. They may be standing at the machine, unsure what to check next or what a word means. Green Hat slows the process down, explains terms before using them, and walks them through one safe step at a time.
 
 ## What This App Is Not
 
@@ -26,7 +26,7 @@ Green Hat is not a replacement for training, supervision, machine manuals, or sh
 | Production scheduling | Job notes and handoff summaries |
 | Fanuc/Okuma/Haas parameter pages | Plain-English control checks |
 
-If a feature would confuse a brand new operator, it probably belongs somewhere else.
+If a feature would confuse a brand new operator, it probably belongs somewhere else. Green Hat should never assume the user already knows machining, G-code, tooling, offsets, workholding, feeds and speeds, or control terminology.
 
 ## Ecosystem Position
 
@@ -73,6 +73,19 @@ These apps are complementary, not redundant. Green Hat intentionally stays focus
 - Custom pre-cut checklist items
 - Optional Day 1 guided path for brand new operators
 - Offline-capable PWA behavior after first load
+
+## Beginner-First Rule
+
+Green Hat must be understandable by someone who knows nothing about the trade. Every screen, label, checklist, and explanation should assume no prior CNC knowledge.
+
+Practical rules:
+
+- Use plain English before shop shorthand.
+- Explain CNC terms before or immediately when they appear.
+- Prefer one safe step at a time over dense reference text.
+- Put safety and verification before speed or productivity.
+- Avoid advanced machinist details unless they are required for safe beginner setup.
+- Send advanced topics to CNC Work Helper instead of expanding Green Hat beyond beginner scope.
 
 ## Design Rules
 
@@ -145,7 +158,7 @@ Use Export JSON before clearing browser storage, switching devices, or making ri
 
 Before adding a feature, ask:
 
-1. Would a brand new operator understand this without extra explanation?
+1. Would someone who knows nothing about CNC understand this without outside explanation?
 2. Does this belong in CNC Work Helper instead?
 3. Does this require a server, account, login, or cloud sync?
 4. Does it improve the existing beginner flow?
@@ -188,5 +201,6 @@ Before making code or file changes in this repo:
 8. Use learning-path content when it helps new operators build safe setup habits.
 9. Assess risks before adding automation, AI fallback, generated instructions, or safety-related content.
 10. Optimize only for a named goal such as clarity, reliability, readability, offline use, or beginner safety.
+11. Assume the user knows nothing about the trade unless the screen has already explained the term or action.
 
 Permanent rule: MGP must remain visible in build/version information and cannot be removed, hidden, renamed, or replaced.

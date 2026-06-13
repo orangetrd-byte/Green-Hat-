@@ -2,9 +2,9 @@
 
 ## Project Purpose
 
-Green Hat is a beginner-focused CNC lathe touch-off and setup guidance PWA. It is designed for new operators, students, hobbyists, and shop-floor users who need plain-English help with touch-off, setup notes, safe verification, and basic reference information.
+Green Hat is a beginner-focused CNC lathe touch-off and setup guidance PWA. It is designed for true beginners: new operators, students, hobbyists, and shop-floor users who may know nothing about CNC, lathes, tooling, offsets, setup steps, or shop terminology. It must provide plain-English help with touch-off, setup notes, safe verification, and basic reference information.
 
-The app is intentionally focused. It is not a G-code generator, simulator, production planner, tool library, or geometry calculator.
+The app is intentionally focused. It is not a G-code generator, simulator, production planner, tool library, geometry calculator, or advanced machinist reference. If a term or action is not beginner-safe without explanation, Green Hat must explain it or leave it out.
 
 Core scope:
 
@@ -18,6 +18,16 @@ Core scope:
 - simple beginner diagrams
 - shop-specific rules and custom checklist items
 - offline mobile PWA behavior
+
+## Beginner-First Operating Rule
+
+Green Hat assumes the user knows nothing about the trade. Design and code changes must preserve this rule.
+
+- Use plain English before shop shorthand.
+- Explain terms before or immediately when they appear.
+- Prefer guided steps, checks, and warnings over dense reference pages.
+- Put safety and verification before speed, productivity, or advanced detail.
+- Move advanced machining, G-code, tooling, and production topics to CNC Work Helper or CNC Cell Planner.
 
 ## Repository Location
 
