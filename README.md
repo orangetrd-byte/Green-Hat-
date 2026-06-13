@@ -174,3 +174,19 @@ If a drawing does not directly support that question, it belongs in CNC Work Hel
 - Green Hat: beginner CNC lathe setup and touch-off
 
 Last updated: June 2026
+## Assistant Change Guidelines
+
+Before making code or file changes in this repo:
+
+1. Clarify the beginner setup goal, assumptions, constraints, and measurable success criteria.
+2. Use structured output for setup steps, checklists, risks, documentation, and troubleshooting.
+3. Compare options before changing beginner workflows, safety language, storage, dependencies, or AI behavior.
+4. Use brainstorming only for beginner-safe content, diagrams, checklists, and UI ideas.
+5. Give technical explanations only when needed, and keep them plain-English and beginner-safe.
+6. Draft concise documentation or handoff notes for user-facing workflow changes.
+7. Use a troubleshooting checklist before fixing bugs in touch-off flow, setup notes, checklists, import/export, or PWA behavior.
+8. Use learning-path content when it helps new operators build safe setup habits.
+9. Assess risks before adding automation, AI fallback, generated instructions, or safety-related content.
+10. Optimize only for a named goal such as clarity, reliability, readability, offline use, or beginner safety.
+
+Permanent rule: MGP must remain visible in build/version information and cannot be removed, hidden, renamed, or replaced.
