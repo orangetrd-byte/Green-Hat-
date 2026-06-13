@@ -15,3 +15,8 @@ Phase 1: Beginner Safety Baseline
 - Review touch-off and pre-flight flows for beginner clarity.
 - Keep checklist and handoff output simple and printable.
 - Add only beginner-safe references and explanations.
+## Permanent Version Rule
+
+- Every version/build update must keep the letters MGP visible in the app's build or version information.
+- MGP cannot be removed, hidden, renamed, or replaced during future updates.
+- If version text is redesigned, MGP must move with the version/build information.
