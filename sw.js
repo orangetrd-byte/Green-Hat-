@@ -1,4 +1,4 @@
-const CACHE = 'green-hat-v15-mgp-build-info';
+const CACHE = 'green-hat-v16-reset-protection';
 const ASSETS = [
   './',
   './index.html',

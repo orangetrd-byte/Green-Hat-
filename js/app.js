@@ -709,8 +709,20 @@ function importJSON(e) {
   e.target.value = '';
 }
 
+function hasSavedDeviceData() {
+  return state.savedJobs.length > 0 ||
+    state.savedSF.length > 0 ||
+    state.noteLog.length > 0 ||
+    state.customChecklist.length > 0 ||
+    Object.keys(state.setupData || {}).length > 0;
+}
+
 function clearAll() {
-  if (!confirm('Clear all saved jobs, speeds & feeds, note log, and setup data?')) return;
+  const message = 'Reset this device? This clears saved jobs, notes, speeds/feeds, setup reference, and checklist items from this device only. Export Backup first if you need to keep anything.';
+  if (!confirm(message)) return;
+
+  if (hasSavedDeviceData() && !confirm('Saved data was found on this device. Reset anyway?')) return;
+
   state.savedJobs = [];
   state.savedSF   = [];
   state.noteLog   = [];
@@ -724,8 +736,8 @@ function clearAll() {
   renderNoteLog();
   renderCustomChecklist();
   newJob();
-  setActionStatus('All saved Green Hat data has been cleared from this device.');
-  showToast('All data cleared');
+  setActionStatus('Device storage reset. Import Backup can restore saved data if you exported one.');
+  showToast('Device reset');
 }
 
 // ── Helpers ────────────────────────────────
