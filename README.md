@@ -187,6 +187,23 @@ If a drawing does not directly support that question, it belongs in CNC Work Hel
 - Green Hat: beginner CNC lathe setup and touch-off
 
 Last updated: June 2026
+## Current Project Status
+
+**Status as of June 27, 2026:** Active beginner-first CNC companion.
+
+Green Hat is for a true beginner who may know nothing about CNC, lathes, tooling, offsets, or shop language. It should explain terms before using them and guide the user one safe step at a time.
+
+Where it stands:
+
+- Core identity is clear: beginner touch-off, setup notes, safety checks, handoff logs, plain-English reference, and offline PWA use.
+- Advanced machining references, generated G-code, deeper tooling libraries, and production planning belong in other repos.
+- Every feature should improve beginner safety, understanding, or setup confidence.
+- MGP build/version information must remain visible and cannot be removed.
+
+Next practical focus:
+
+- Keep polishing beginner language, guided setup, diagrams, safety checks, and handoff clarity without drifting into CNC Work Helper scope.
+
 ## Assistant Change Guidelines
 
 Before making code or file changes in this repo:
@@ -204,3 +221,4 @@ Before making code or file changes in this repo:
 11. Assume the user knows nothing about the trade unless the screen has already explained the term or action.
 
 Permanent rule: MGP must remain visible in build/version information and cannot be removed, hidden, renamed, or replaced.
+
