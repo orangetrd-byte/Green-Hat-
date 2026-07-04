@@ -1,0 +1,20 @@
+# Dependency dirs
+node_modules/
+.pnp/
+.pnp.js
+
+# Build / tooling artifacts
+dist/
+build/
+.tmp/
+
+# IDE / OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Globs / shell mishaps — do not commit
+css/css
+js/js
+icons/Icon
+/{css,js,icons}/{css,js,icons}
