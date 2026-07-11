@@ -616,6 +616,12 @@ body {
   margin-bottom: 16px;
 }
 
+@media (max-width: 420px) {
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .result-card {
   background: var(--md-primary-container);
   border-radius: var(--radius-md);

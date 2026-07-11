@@ -1,4 +1,4 @@
-const CACHE = 'green-hat-v16-reset-protection';
+const CACHE = 'green-hat-v17-reset-protection';
 const ASSETS = [
   './',
   './index.html',
@@ -33,12 +33,18 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   const freshFirst = e.request.mode === 'navigate' || /\.(html|js|css|json)$/i.test(url.pathname);
 
+  function cacheOnlyGood(storeResponse) {
+    const good = storeResponse && (storeResponse.status === 200 || storeResponse.type === 'opaque');
+    if (!good) return;
+    const copy = storeResponse.clone();
+    caches.open(CACHE).then(cache => cache.put(e.request, copy));
+  }
+
   if (freshFirst) {
     e.respondWith(
       fetch(e.request)
         .then(response => {
-          const copy = response.clone();
-          caches.open(CACHE).then(cache => cache.put(e.request, copy));
+          caches.open(CACHE).then(cache => cache.put(e.request, response.clone()));
           return response;
         })
         .catch(() => caches.match(e.request).then(cached => cached || caches.match('./index.html')))
@@ -47,10 +53,12 @@ self.addEventListener('fetch', e => {
   }
 
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request).then(response => {
-      const copy = response.clone();
-      caches.open(CACHE).then(cache => cache.put(e.request, copy));
-      return response;
-    }).catch(() => caches.match('./index.html')))
+    caches.match(e.request).then(r => {
+      if (r) return r;
+      return fetch(e.request).then(response => {
+        cacheOnlyGood(response);
+        return response;
+      }).catch(() => caches.match('./index.html'));
+    })
   );
 });

@@ -160,7 +160,7 @@ Service worker:
 
 - caches app shell
 - keeps the app available offline
-- uses cache version `green-hat-v16-reset-protection`
+- uses cache version `green-hat-v17-reset-protection`
 - uses network-first navigation for page loads
 - falls back to cached `index.html` when offline
 

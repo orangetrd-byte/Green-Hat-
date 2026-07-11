@@ -367,46 +367,16 @@
           </div>
 
           <div class="checklist" id="verifyChecklist">
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>Work offset set correctly in control</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>Tool offset entered / confirmed</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>X clearance safe before Z move</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>Z clearance safe — no jaws or shoulders in path</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>Spindle speed / CSS set correctly</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>Feed rate confirmed</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>Air move done — no crash on first rapid</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>Feed override at low % for first pass</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>Coolant on / confirmed</span>
-            </div>
-            <div class="check-item" onclick="toggleCheck(this)">
-              <div class="check-box"><span class="material-icons-round">check</span></div>
-              <span>Single block first run</span>
-            </div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>Work offset set correctly in control</span></div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>Tool offset entered / confirmed</span></div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>X clearance safe before Z move</span></div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>Z clearance safe — no jaws or shoulders in path</span></div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>Spindle speed / CSS set correctly</span></div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>Feed rate confirmed</span></div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>Air move done — no crash on first rapid</span></div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>Feed override at low % for first pass</span></div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>Coolant on / confirmed</span></div>
+            <div class="check-item" role="checkbox" aria-checked="false" tabindex="0" onclick="toggleCheck(this)" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleCheck(this)}"><div class="check-box"><span class="material-icons-round">check</span></div><span>Single block first run</span></div>
           </div>
 
           <div class="checklist-progress" id="checkProgress">0 / 10 checked</div>
@@ -851,7 +821,7 @@
         </div>
       </div>
 
-      <div class="app-version">MGP | Green Hat version 1.14 | Build 2026.06.12.02 | PWA cache green-hat-v16</div>
+      <div class="app-version">MGP | Green Hat version 1.15 | Build 2026.07.11.01 | PWA cache green-hat-v17</div>
 
     </section>
 

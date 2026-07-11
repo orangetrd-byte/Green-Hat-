@@ -52,11 +52,15 @@ function loadFromStorage() {
 }
 
 function persist() {
-  localStorage.setItem('cnc_helper_jobs',  JSON.stringify(state.savedJobs));
-  localStorage.setItem('cnc_helper_sf',    JSON.stringify(state.savedSF));
-  localStorage.setItem('green_hat_note_log', JSON.stringify(state.noteLog));
-  localStorage.setItem('cnc_helper_setup', JSON.stringify(state.setupData));
-  localStorage.setItem('green_hat_custom_checklist', JSON.stringify(state.customChecklist));
+  try {
+    localStorage.setItem('cnc_helper_jobs',  JSON.stringify(state.savedJobs));
+    localStorage.setItem('cnc_helper_sf',    JSON.stringify(state.savedSF));
+    localStorage.setItem('green_hat_note_log', JSON.stringify(state.noteLog));
+    localStorage.setItem('cnc_helper_setup', JSON.stringify(state.setupData));
+    localStorage.setItem('green_hat_custom_checklist', JSON.stringify(state.customChecklist));
+  } catch (err) {
+    showToast('Could not save on this device. Storage may be full or blocked. Export a backup and free space, then try again.');
+  }
 }
 
 // ── Navigation ────────────────────────────
@@ -78,10 +82,16 @@ function bindEvents() {
   // Menu
   document.getElementById('menuBtn').addEventListener('click', e => {
     e.stopPropagation();
-    document.getElementById('overflowMenu').classList.toggle('open');
-    document.getElementById('menuBackdrop').classList.toggle('open');
+    const menu = document.getElementById('overflowMenu');
+    if (menu.classList.contains('open')) { closeMenu(); } else { openMenu(); }
   });
   document.getElementById('menuBackdrop').addEventListener('click', closeMenu);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      const menu = document.getElementById('overflowMenu');
+      if (menu.classList.contains('open')) { closeMenu(); document.getElementById('menuBtn')?.focus(); }
+    }
+  });
 
   // Save/load shortcuts
   document.getElementById('saveBtn').addEventListener('click', saveCurrentJob);
@@ -96,6 +106,12 @@ function bindEvents() {
   document.getElementById('addCustomCheckBtn').addEventListener('click', addCustomCheck);
   document.getElementById('clearCustomChecksBtn').addEventListener('click', clearCustomChecks);
   document.getElementById('unitSystem').addEventListener('change', () => {
+    const newUnit = val('unitSystem') || 'imperial';
+    const prevUnit = currentUnitSystem();
+    if (!state._unitSwitchWarned && state.savedJobs.length && newUnit !== prevUnit) {
+      state._unitSwitchWarned = true;
+      showToast(`Units switched to ${newUnit}. Existing job numbers were not converted — review them before reuse.`);
+    }
     saveUnitSystem();
     updateUnitLabels();
     calcRPM();
@@ -137,6 +153,16 @@ function bindEvents() {
 function closeMenu() {
   document.getElementById('overflowMenu').classList.remove('open');
   document.getElementById('menuBackdrop').classList.remove('open');
+  const trigger = document.getElementById('menuBtn');
+  if (trigger) trigger.setAttribute('aria-expanded', 'false');
+}
+
+function openMenu() {
+  closeMenu();
+  document.getElementById('overflowMenu').classList.add('open');
+  document.getElementById('menuBackdrop').classList.add('open');
+  const trigger = document.getElementById('menuBtn');
+  if (trigger) trigger.setAttribute('aria-expanded', 'true');
 }
 
 // ── Job Notes ─────────────────────────────
@@ -460,6 +486,8 @@ function resetWizard() {
 // ── Checklist ─────────────────────────────
 function toggleCheck(el) {
   el.classList.toggle('checked');
+  const checked = el.classList.contains('checked');
+  el.setAttribute('aria-checked', checked ? 'true' : 'false');
   updateCheckProgress();
 }
 
@@ -685,12 +713,26 @@ function importJSON(e) {
   const reader = new FileReader();
   reader.onload = ev => {
     try {
-      const data = JSON.parse(ev.target.result);
-      if (data.jobs)  state.savedJobs = data.jobs;
-      if (data.sf)    state.savedSF   = data.sf;
-      if (data.noteLog) state.noteLog = data.noteLog;
-      if (data.setup) state.setupData = data.setup;
-      if (data.customChecklist) state.customChecklist = data.customChecklist;
+      const raw = JSON.parse(ev.target.result);
+      const requiredTopFields = ['jobs','sf','noteLog','setup','customChecklist'];
+      const hasAnyTopLevel = requiredTopFields.some(key => Object.prototype.hasOwnProperty.call(raw, key));
+      if (!hasAnyTopLevel) {
+        setActionStatus('Import failed. This file does not look like a Green Hat backup.');
+        showToast('Import failed — incompatible file');
+        return;
+      }
+      const incomingShape = {
+        jobs: Array.isArray(raw.jobs) ? raw.jobs : undefined,
+        sf: Array.isArray(raw.sf) ? raw.sf : undefined,
+        noteLog: Array.isArray(raw.noteLog) ? raw.noteLog : undefined,
+        setup: raw.setup && typeof raw.setup === 'object' ? raw.setup : undefined,
+        customChecklist: Array.isArray(raw.customChecklist) ? raw.customChecklist : undefined,
+      };
+      if (incomingShape.jobs !== undefined) state.savedJobs = incomingShape.jobs;
+      if (incomingShape.sf !== undefined) state.savedSF = incomingShape.sf;
+      if (incomingShape.noteLog !== undefined) state.noteLog = incomingShape.noteLog;
+      if (incomingShape.setup !== undefined) state.setupData = incomingShape.setup;
+      if (incomingShape.customChecklist !== undefined) state.customChecklist = incomingShape.customChecklist;
       persist();
       renderSavedJobsInline();
       renderSavedSF();
@@ -718,10 +760,13 @@ function hasSavedDeviceData() {
 }
 
 function clearAll() {
-  const message = 'Reset this device? This clears saved jobs, notes, speeds/feeds, setup reference, and checklist items from this device only. Export Backup first if you need to keep anything.';
+  const message = 'Reset this device? This clears saved jobs, notes, speeds/feeds, setup reference, and checklist items from this device only.';
   if (!confirm(message)) return;
 
-  if (hasSavedDeviceData() && !confirm('Saved data was found on this device. Reset anyway?')) return;
+  if (hasSavedDeviceData()) {
+    exportJSON();
+    if (!confirm('Backup exported from this device. Reset saved data now?')) return;
+  }
 
   state.savedJobs = [];
   state.savedSF   = [];
@@ -736,7 +781,7 @@ function clearAll() {
   renderNoteLog();
   renderCustomChecklist();
   newJob();
-  setActionStatus('Device storage reset. Import Backup can restore saved data if you exported one.');
+  setActionStatus('Device storage reset. Import Backup can restore saved data if exported.');
   showToast('Device reset');
 }
 
